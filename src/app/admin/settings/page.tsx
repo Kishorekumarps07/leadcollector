@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Settings as SettingsIcon, Bell, Lock, User, Globe, Save, Database,
-    Smartphone, MapPin, CheckCircle, AlertCircle, Loader2, RefreshCcw, Eye, EyeOff, Server, Users, FileText
+    Smartphone, MapPin, CheckCircle, AlertCircle, Loader2, RefreshCcw, Eye, EyeOff, Server, Users, FileText, Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
@@ -13,13 +13,15 @@ import api from '@/lib/api';
 function Toast({ message, type }: { message: string; type: 'success' | 'error' }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-2xl shadow-xl text-sm font-bold ${type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            className={`fixed top-8 right-8 z-[100] flex items-center gap-4 px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-xl ${type === 'success' ? 'bg-white text-emerald-600 border-emerald-100' : 'bg-white text-red-600 border-red-100'}`}
         >
-            {type === 'success' ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
-            {message}
+            <div className={`p-2 rounded-xl scale-90 ${type === 'success' ? 'bg-emerald-50' : 'bg-red-50'}`}>
+                {type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+            </div>
+            <span className="text-xs font-black uppercase tracking-widest italic">{message}</span>
         </motion.div>
     );
 }
@@ -30,9 +32,13 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void 
         <button
             type="button"
             onClick={onChange}
-            className={`w-12 h-6 rounded-full relative transition-colors duration-300 focus:outline-none ${checked ? 'bg-indigo-600' : 'bg-slate-300'}`}
+            className={`w-14 h-7 rounded-full relative transition-all duration-500 shadow-inner flex items-center px-1 border ${checked ? 'bg-gold-main/20 border-gold-main/40' : 'bg-slate-100 border-slate-200'}`}
         >
-            <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all duration-300 ${checked ? 'right-1' : 'left-1'}`} />
+            <motion.div
+                animate={{ x: checked ? 28 : 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                className={`w-5 h-5 rounded-full shadow-lg ${checked ? 'bg-gold-main bg-gradient-to-tr from-gold-main to-gold-dark shadow-gold-main/20' : 'bg-white'}`}
+            />
         </button>
     );
 }
@@ -106,9 +112,9 @@ export default function SettingsPage() {
         setSubmitting(true);
         try {
             await api.patch('admin/profile', profile);
-            showToast('Profile updated successfully', 'success');
+            showToast('Operational profile synchronized', 'success');
         } catch (err: any) {
-            showToast(err.response?.data?.message || 'Failed to update profile', 'error');
+            showToast(err.response?.data?.message || 'Profile sync failed', 'error');
         } finally {
             setSubmitting(false);
         }
@@ -117,7 +123,7 @@ export default function SettingsPage() {
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
         if (passwords.newPassword !== passwords.confirmPassword) {
-            return showToast('New passwords do not match', 'error');
+            return showToast('Credential mismatch', 'error');
         }
         setSubmitting(true);
         try {
@@ -126,9 +132,9 @@ export default function SettingsPage() {
                 newPassword: passwords.newPassword,
             });
             setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
-            showToast('Password changed successfully', 'success');
+            showToast('Security protocol updated', 'success');
         } catch (err: any) {
-            showToast(err.response?.data?.message || 'Failed to change password', 'error');
+            showToast(err.response?.data?.message || 'Protocol update failed', 'error');
         } finally {
             setSubmitting(false);
         }
@@ -136,93 +142,104 @@ export default function SettingsPage() {
 
     const handlePrefsSave = () => {
         localStorage.setItem('app_prefs', JSON.stringify(prefs));
-        showToast('Preferences saved', 'success');
+        showToast('System preferences committed', 'success');
     };
 
     const handleNotifSave = () => {
         localStorage.setItem('app_notifs', JSON.stringify(notifPrefs));
-        showToast('Notification settings saved', 'success');
+        showToast('Comms settings committed', 'success');
     };
 
     const tabs = [
-        { id: 'account', label: 'Account', icon: User },
+        { id: 'account', label: 'Identity', icon: User },
         { id: 'privacy', label: 'Security', icon: Lock },
-        { id: 'general', label: 'General', icon: SettingsIcon },
-        { id: 'notifications', label: 'Notifications', icon: Bell },
-        { id: 'system', label: 'System', icon: Database },
+        { id: 'general', label: 'Operations', icon: SettingsIcon },
+        { id: 'notifications', label: 'Comms', icon: Bell },
+        { id: 'system', label: 'Nexus Info', icon: Database },
     ];
 
-    const inputClass = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-300 transition-all font-medium text-sm";
-    const labelClass = "text-xs font-black text-slate-500 uppercase tracking-widest pl-1";
+    const inputClass = "w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-4 focus:ring-gold-main/10 focus:border-gold-main/40 transition-all font-bold text-black shadow-sm text-sm italic uppercase placeholder:text-slate-300";
+    const labelClass = "text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic pl-1";
 
     return (
-        <div className="space-y-6 max-w-4xl">
+        <div className="space-y-8 max-w-5xl">
             <AnimatePresence>
                 {toast && <Toast message={toast.message} type={toast.type} />}
             </AnimatePresence>
 
-            <div>
-                <h1 className="text-3xl font-bold text-slate-900">System Settings</h1>
-                <p className="text-slate-500 mt-1">Configure your organization preferences and application defaults.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-black text-black italic tracking-tight uppercase">Strategic Controls</h1>
+                    <p className="text-slate-500 mt-1 text-sm italic">Configure organizational protocols and tactical parameters.</p>
+                </div>
+                <div className="flex items-center gap-3 px-4 py-2 bg-white border border-slate-200 rounded-2xl shadow-xl">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-black text-gold-dark uppercase tracking-widest italic">Encrypted Connection Active</span>
+                </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mt-4 lg:mt-8">
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 mt-4 lg:mt-8 items-start">
                 {/* Sidebar Tabs - Horizontal Scroll on Mobile */}
-                <div className="w-full lg:w-56 flex lg:flex-col overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 gap-2 flex-shrink-0 custom-scrollbar no-scrollbar">
+                <div className="w-full lg:w-64 flex lg:flex-col overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 gap-2 flex-shrink-0 custom-scrollbar no-scrollbar sticky top-0">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left whitespace-nowrap min-w-max lg:min-w-0 lg:w-full ${activeTab === tab.id
-                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 font-bold'
-                                : 'bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-100/50 border border-slate-100 lg:border-transparent'}`}
+                            className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all text-left whitespace-nowrap min-w-max lg:min-w-0 lg:w-full border italic ${activeTab === tab.id
+                                ? 'bg-gold-main text-white shadow-2xl shadow-gold-main/20 font-black border-gold-main'
+                                : 'bg-white text-slate-400 hover:text-gold-dark hover:bg-slate-50 border-slate-100'}`}
                         >
-                            <tab.icon size={18} />
-                            <span className="text-sm">{tab.label}</span>
+                            <tab.icon size={20} className={activeTab === tab.id ? 'stroke-[3px]' : 'opacity-40'} />
+                            <span className="text-[11px] uppercase tracking-[0.15em] font-black">{tab.label}</span>
                         </button>
                     ))}
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 w-full mb-24">
                     <motion.div
                         key={activeTab}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4 lg:p-8"
+                        initial={{ opacity: 0, x: 10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="bg-white premium-card border border-slate-100 p-6 lg:p-10 shadow-2xl relative overflow-hidden"
                     >
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-gold-main/5 blur-[100px] -z-10 rounded-full" />
+
                         {/* ACCOUNT TAB */}
                         {activeTab === 'account' && (
-                            <form onSubmit={handleProfileSave} className="space-y-6">
-                                <h3 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-4">Profile Information</h3>
-                                <div className="flex items-center gap-5 mb-6">
-                                    <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-md">
-                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || 'A')}&background=6366f1&color=fff&size=128`} alt="avatar" className="w-full h-full" />
+                            <form onSubmit={handleProfileSave} className="space-y-8">
+                                <div className="border-b border-slate-100 pb-6">
+                                    <h3 className="text-xl font-black text-black italic tracking-tight uppercase">Operator Identity</h3>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1 font-black italic">Personal tactical markers and communication links.</p>
+                                </div>
+                                <div className="flex items-center gap-6 p-6 bg-slate-50/50 rounded-3xl border border-slate-100 shadow-sm">
+                                    <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl border-2 border-gold-main/20">
+                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || 'A')}&background=c5a059&color=ffffff&size=128&bold=true`} alt="avatar" className="w-full h-full" />
                                     </div>
                                     <div>
-                                        <p className="font-black text-slate-900">{profile.name}</p>
-                                        <p className="text-xs text-indigo-600 font-bold uppercase tracking-widest">{user?.role}</p>
+                                        <p className="text-xl font-black text-black italic tracking-tight uppercase">{profile.name}</p>
+                                        <p className="text-[10px] text-gold-dark font-black uppercase tracking-[0.2em] italic mt-1 bg-gold-main/10 px-3 py-1 rounded-full border border-gold-main/20 inline-block tracking-widest">{user?.role}</p>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className={labelClass}>Full Name</label>
+                                        <label className={labelClass}>Call Sign (Alias)</label>
                                         <input type="text" className={inputClass} value={profile.name} onChange={e => setProfile({ ...profile, name: e.target.value })} />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className={labelClass}>Phone Number</label>
-                                        <input type="text" className={inputClass} value={profile.phone} onChange={e => setProfile({ ...profile, phone: e.target.value })} placeholder="10-digit number" />
+                                        <label className={labelClass}>secure Line (Voice)</label>
+                                        <input type="text" className={inputClass} value={profile.phone} onChange={e => setProfile({ ...profile, phone: e.target.value })} placeholder="+91 00000 00000" />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className={labelClass}>Email Address</label>
+                                    <label className={labelClass}>Nexus Comms (Email)</label>
                                     <input type="email" className={inputClass} value={profile.email} onChange={e => setProfile({ ...profile, email: e.target.value })} />
                                 </div>
-                                <div className="pt-2 flex justify-end">
-                                    <button type="submit" disabled={submitting} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 disabled:opacity-50">
-                                        {submitting ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                                        Save Profile
+                                <div className="pt-4 flex justify-end">
+                                    <button type="submit" disabled={submitting} className="btn-primary py-4 px-10 uppercase tracking-widest text-xs">
+                                        {submitting ? <RefreshCcw size={18} className="animate-spin" /> : <Save size={18} />}
+                                        Update Profile
                                     </button>
                                 </div>
                             </form>
@@ -230,37 +247,46 @@ export default function SettingsPage() {
 
                         {/* SECURITY TAB */}
                         {activeTab === 'privacy' && (
-                            <form onSubmit={handlePasswordChange} className="space-y-6">
-                                <h3 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-4">Change Password</h3>
-                                <p className="text-sm text-slate-500">For your security, use a strong password that you don't use elsewhere.</p>
+                            <form onSubmit={handlePasswordChange} className="space-y-8">
+                                <div className="border-b border-slate-100 pb-6">
+                                    <h3 className="text-xl font-black text-black italic tracking-tight uppercase">Encryption Override</h3>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1 font-black italic">Rotation of tactical access keys and security nodes.</p>
+                                </div>
 
-                                {[
-                                    { label: 'Current Password', key: 'current', field: 'currentPassword' as const },
-                                    { label: 'New Password', key: 'newPw', field: 'newPassword' as const },
-                                    { label: 'Confirm New Password', key: 'confirm', field: 'confirmPassword' as const },
-                                ].map(({ label, key, field }) => (
-                                    <div key={field} className="space-y-2">
-                                        <label className={labelClass}>{label}</label>
-                                        <div className="relative">
-                                            <input
-                                                type={showPw[key as keyof typeof showPw] ? 'text' : 'password'}
-                                                required
-                                                className={`${inputClass} pr-12`}
-                                                value={passwords[field]}
-                                                onChange={e => setPasswords({ ...passwords, [field]: e.target.value })}
-                                                placeholder="••••••••"
-                                            />
-                                            <button type="button" onClick={() => setShowPw({ ...showPw, [key]: !showPw[key as keyof typeof showPw] })} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
-                                                {showPw[key as keyof typeof showPw] ? <EyeOff size={16} /> : <Eye size={16} />}
-                                            </button>
+                                <div className="p-6 bg-red-50 border border-red-100 rounded-2xl flex items-start gap-4">
+                                    <AlertCircle className="text-red-600 shrink-0 mt-0.5" size={18} />
+                                    <p className="text-[10px] text-red-600 uppercase tracking-widest font-black italic leading-relaxed">Warning: Rotating access keys will terminate all active sessions. Ensure you have backup protocols in place.</p>
+                                </div>
+
+                                <div className="space-y-6">
+                                    {[
+                                        { label: 'Current Access Key', key: 'current', field: 'currentPassword' as const },
+                                        { label: 'New Tactical Key', key: 'newPw', field: 'newPassword' as const },
+                                        { label: 'Verify Authorization', key: 'confirm', field: 'confirmPassword' as const },
+                                    ].map(({ label, key, field }) => (
+                                        <div key={field} className="space-y-2">
+                                            <label className={labelClass}>{label}</label>
+                                            <div className="relative">
+                                                <input
+                                                    type={showPw[key as keyof typeof showPw] ? 'text' : 'password'}
+                                                    required
+                                                    className={`${inputClass} pr-14`}
+                                                    value={passwords[field]}
+                                                    onChange={e => setPasswords({ ...passwords, [field]: e.target.value })}
+                                                    placeholder="••••••••"
+                                                />
+                                                <button type="button" onClick={() => setShowPw({ ...showPw, [key]: !showPw[key as keyof typeof showPw] })} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-gold-main transition-colors">
+                                                    {showPw[key as keyof typeof showPw] ? <EyeOff size={18} /> : <Eye size={18} />}
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
 
-                                <div className="pt-2 flex justify-end">
-                                    <button type="submit" disabled={submitting} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 disabled:opacity-50">
-                                        {submitting ? <Loader2 size={18} className="animate-spin" /> : <Lock size={18} />}
-                                        Update Password
+                                <div className="pt-4 flex justify-end">
+                                    <button type="submit" disabled={submitting} className="btn-primary py-4 px-10 uppercase tracking-widest text-xs">
+                                        {submitting ? <RefreshCcw size={18} className="animate-spin" /> : <Lock size={18} />}
+                                        Seal Credentials
                                     </button>
                                 </div>
                             </form>
@@ -268,15 +294,18 @@ export default function SettingsPage() {
 
                         {/* GENERAL TAB */}
                         {activeTab === 'general' && (
-                            <div className="space-y-8">
-                                <h3 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-4">General Preferences</h3>
+                            <div className="space-y-10">
+                                <div className="border-b border-slate-100 pb-6">
+                                    <h3 className="text-xl font-black text-black italic tracking-tight uppercase">Operational Bounds</h3>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1 font-black italic">Global system parameters and field deployment rules.</p>
+                                </div>
 
                                 <div className="space-y-2">
-                                    <label className={labelClass}>Timezone</label>
+                                    <label className={labelClass}>Standard Synchronization Zone</label>
                                     <div className="relative">
-                                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                                        <Globe className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                                         <select
-                                            className={`${inputClass} pl-10 appearance-none cursor-pointer`}
+                                            className={`${inputClass} pl-12 appearance-none cursor-pointer`}
                                             value={prefs.timezone}
                                             onChange={e => setPrefs({ ...prefs, timezone: e.target.value })}
                                         >
@@ -289,18 +318,18 @@ export default function SettingsPage() {
                                     </div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <h4 className="text-sm font-black text-slate-700">Data Collection Rules</h4>
+                                <div className="space-y-4">
+                                    <h4 className="text-xs font-black text-gold-dark uppercase tracking-[0.2em] italic mb-4">Deployment Protocols</h4>
                                     {[
-                                        { key: 'enforceGps', icon: MapPin, label: 'Enforce GPS Tracking', desc: 'Require location data for every form submission.' },
-                                        { key: 'mobileOnly', icon: Smartphone, label: 'Mobile-Only Access', desc: 'Restricts agent submissions to mobile devices only.' },
+                                        { key: 'enforceGps', icon: MapPin, label: 'Geo-Verification Enforced', desc: 'Secure location lock required for all intelligence packets.' },
+                                        { key: 'mobileOnly', icon: Smartphone, label: 'Mobile-Tactical Interface Only', desc: 'Restricts submission vectors to verified handheld hardware.' },
                                     ].map(({ key, icon: Icon, label, desc }) => (
-                                        <div key={key} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-white rounded-xl text-indigo-600 shadow-sm"><Icon size={18} /></div>
+                                        <div key={key} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-3xl border border-slate-100 group hover:border-gold-main/20 transition-all shadow-sm">
+                                            <div className="flex items-center gap-5">
+                                                <div className="p-4 bg-gold-main/5 rounded-2xl text-gold-dark border border-gold-main/10 shadow-sm group-hover:scale-110 transition-transform"><Icon size={24} /></div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-900">{label}</p>
-                                                    <p className="text-xs text-slate-500">{desc}</p>
+                                                    <p className="text-sm font-black text-black italic uppercase">{label}</p>
+                                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-black mt-1 max-w-xs italic">{desc}</p>
                                                 </div>
                                             </div>
                                             <Toggle checked={prefs[key as keyof typeof prefs] as boolean} onChange={() => setPrefs({ ...prefs, [key]: !prefs[key as keyof typeof prefs] })} />
@@ -308,9 +337,9 @@ export default function SettingsPage() {
                                     ))}
                                 </div>
 
-                                <div className="flex justify-end">
-                                    <button onClick={handlePrefsSave} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
-                                        <Save size={18} /> Save Preferences
+                                <div className="flex justify-end pt-4">
+                                    <button onClick={handlePrefsSave} className="btn-primary py-4 px-10 uppercase tracking-widest text-xs">
+                                        <Save size={18} /> Commit Protocols
                                     </button>
                                 </div>
                             </div>
@@ -318,30 +347,33 @@ export default function SettingsPage() {
 
                         {/* NOTIFICATIONS TAB */}
                         {activeTab === 'notifications' && (
-                            <div className="space-y-8">
-                                <h3 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-4">Notification Preferences</h3>
-                                <div className="space-y-3">
+                            <div className="space-y-10">
+                                <div className="border-b border-slate-100 pb-6">
+                                    <h3 className="text-xl font-black text-black italic tracking-tight uppercase">Comms Frequency</h3>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1 font-black italic">Signal relay settings and intelligence report alerts.</p>
+                                </div>
+                                <div className="space-y-4">
                                     {[
-                                        { key: 'newSubmission', icon: FileText, label: 'New Submission', desc: 'Notify when an agent submits a new record.' },
-                                        { key: 'agentInactive', icon: Users, label: 'Agent Inactive Alert', desc: 'Notify when an agent has had no activity for 24h.' },
-                                        { key: 'weeklyReport', icon: Bell, label: 'Weekly Summary Report', desc: 'Receive a weekly email summary every Monday.' },
-                                        { key: 'exportComplete', icon: Database, label: 'Export Complete', desc: 'Notify when a data export has finished.' },
+                                        { key: 'newSubmission', icon: FileText, label: 'Intelligence Packet Alert', desc: 'Instant relay when fresh field data is uploaded.' },
+                                        { key: 'agentInactive', icon: Users, label: 'Silent Node Warning', desc: 'Critical alert if operator signal is lost for > 24h.' },
+                                        { key: 'weeklyReport', icon: Bell, label: 'Strategic Nexus Summary', desc: 'Consolidated intelligence brief delivered weekly.' },
+                                        { key: 'exportComplete', icon: Database, label: 'Data Extraction sync', desc: 'Confirmation when major data nodes are offloaded.' },
                                     ].map(({ key, icon: Icon, label, desc }) => (
-                                        <div key={key} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-white rounded-xl text-indigo-600 shadow-sm"><Icon size={18} /></div>
+                                        <div key={key} className="flex items-center justify-between p-6 bg-slate-50/50 rounded-3xl border border-slate-100 group hover:border-gold-main/20 transition-all shadow-sm">
+                                            <div className="flex items-center gap-5">
+                                                <div className="p-4 bg-gold-main/5 rounded-2xl text-gold-dark border border-gold-main/10 shadow-sm group-hover:scale-110 transition-transform"><Icon size={24} /></div>
                                                 <div>
-                                                    <p className="text-sm font-bold text-slate-900">{label}</p>
-                                                    <p className="text-xs text-slate-500">{desc}</p>
+                                                    <p className="text-sm font-black text-black italic uppercase">{label}</p>
+                                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-black mt-1 max-w-xs italic">{desc}</p>
                                                 </div>
                                             </div>
                                             <Toggle checked={notifPrefs[key as keyof typeof notifPrefs]} onChange={() => setNotifPrefs({ ...notifPrefs, [key]: !notifPrefs[key as keyof typeof notifPrefs] })} />
                                         </div>
                                     ))}
                                 </div>
-                                <div className="flex justify-end">
-                                    <button onClick={handleNotifSave} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
-                                        <Save size={18} /> Save Notifications
+                                <div className="flex justify-end pt-4">
+                                    <button onClick={handleNotifSave} className="btn-primary py-4 px-10 uppercase tracking-widest text-xs">
+                                        <Save size={18} /> Seal Comms
                                     </button>
                                 </div>
                             </div>
@@ -349,54 +381,64 @@ export default function SettingsPage() {
 
                         {/* SYSTEM TAB */}
                         {activeTab === 'system' && (
-                            <div className="space-y-8">
-                                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                                    <h3 className="text-lg font-black text-slate-900">System Information</h3>
-                                    <button onClick={() => setActiveTab('system')} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
-                                        <RefreshCcw size={16} className={sysLoading ? 'animate-spin' : ''} />
+                            <div className="space-y-10">
+                                <div className="flex items-center justify-between border-b border-slate-100 pb-6">
+                                    <div>
+                                        <h3 className="text-xl font-black text-black italic tracking-tight text-gold-dark uppercase">Nexus Intelligence</h3>
+                                        <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1 font-black italic">Real-time telemetry from core server nodes.</p>
+                                    </div>
+                                    <button onClick={() => setActiveTab('system')} className="p-3 bg-white border border-slate-200 rounded-2xl text-gold-dark hover:bg-slate-50 transition-all shadow-sm">
+                                        <RefreshCcw size={18} className={sysLoading ? 'animate-spin' : ''} />
                                     </button>
                                 </div>
 
                                 {sysLoading ? (
-                                    <div className="py-12 flex items-center justify-center gap-3 text-slate-400">
-                                        <Loader2 className="animate-spin" size={20} /> Loading system data...
+                                    <div className="py-24 flex flex-col items-center justify-center gap-4 text-slate-300">
+                                        <RefreshCcw className="animate-spin text-gold-main/40" size={48} />
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] italic mt-2 animate-pulse">Syncing with Mainframe...</p>
                                     </div>
                                 ) : sysStats ? (
                                     <>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                                             {[
-                                                { icon: FileText, label: 'Total Records', value: sysStats.totalRecords, color: 'indigo' },
-                                                { icon: Users, label: 'Field Agents', value: sysStats.totalAgents, color: 'blue' },
-                                                { icon: User, label: 'Admins', value: sysStats.totalAdmins, color: 'violet' },
+                                                { icon: FileText, label: 'Archived Intel', value: sysStats.totalRecords, color: 'gold' },
+                                                { icon: Users, label: 'Active Assets', value: sysStats.totalAgents, color: 'gold' },
+                                                { icon: User, label: 'Command Staff', value: sysStats.totalAdmins, color: 'gold' },
                                             ].map((s, i) => (
-                                                <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 text-center">
-                                                    <s.icon size={24} className={`text-${s.color}-500 mx-auto mb-2`} />
-                                                    <p className="text-2xl font-black text-slate-900">{s.value}</p>
-                                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{s.label}</p>
+                                                <div key={i} className="p-6 bg-slate-50/50 rounded-3xl border border-slate-100 text-center shadow-sm group hover:border-gold-main/20 transition-all">
+                                                    <div className="w-12 h-12 bg-gold-main/5 rounded-2xl flex items-center justify-center text-gold-dark mx-auto mb-4 border border-gold-main/10 shadow-sm group-hover:scale-110 transition-transform"><s.icon size={24} /></div>
+                                                    <p className="text-3xl font-black text-black italic tracking-tighter">{s.value}</p>
+                                                    <p className="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em] mt-2 mb-1 italic">{s.label}</p>
                                                 </div>
                                             ))}
                                         </div>
 
-                                        <div className="space-y-3">
-                                            <h4 className="text-sm font-black text-slate-700">Server Status</h4>
+                                        <div className="space-y-4">
+                                            <h4 className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic mb-4 pl-1">Server Telemetry</h4>
                                             {[
-                                                { icon: Server, label: 'Server', value: 'Running' },
-                                                { icon: Database, label: 'MongoDB Atlas', value: sysStats.dbStatus },
-                                                { icon: Globe, label: 'Backend Port', value: '5000' },
-                                                { icon: Globe, label: 'Server Time', value: new Date(sysStats.serverTime).toLocaleString('en-IN') },
-                                            ].map(({ icon: Icon, label, value }) => (
-                                                <div key={label} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                                    <div className="flex items-center gap-3">
-                                                        <Icon size={16} className="text-slate-400" />
-                                                        <span className="text-sm font-bold text-slate-700">{label}</span>
+                                                { icon: Server, label: 'Core Process', value: 'ONLINE / STEADY', active: true },
+                                                { icon: Database, label: 'DBS Atlas Relay', value: sysStats.dbStatus, active: sysStats.dbStatus === 'Connected' },
+                                                { icon: Globe, label: 'Strategic Port', value: '5000 / ENCRYPTED', active: true },
+                                                { icon: Clock, label: 'System Uptime', value: new Date(sysStats.serverTime).toLocaleString('en-IN'), active: true },
+                                            ].map(({ icon: Icon, label, value, active }) => (
+                                                <div key={label} className="flex items-center justify-between p-5 bg-slate-50/50 rounded-2xl border border-slate-100 shadow-sm">
+                                                    <div className="flex items-center gap-4">
+                                                        <Icon size={20} className="text-slate-300" />
+                                                        <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest italic">{label}</span>
                                                     </div>
-                                                    <span className="text-xs font-black px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full">{value}</span>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-[10px] font-black italic text-gold-dark uppercase">{value}</span>
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-emerald-500 shadow-lg shadow-emerald-500/20 animate-pulse' : 'bg-red-500'}`} />
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
                                     </>
                                 ) : (
-                                    <p className="text-slate-400 text-sm text-center italic py-8">No system data available.</p>
+                                    <div className="py-24 text-center">
+                                        <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-200 border border-slate-100 shadow-sm"><Database size={40} /></div>
+                                        <p className="text-slate-300 text-[10px] font-black uppercase tracking-widest italic">Signal Interrupt: Nexus Data Unreachable</p>
+                                    </div>
                                 )}
                             </div>
                         )}

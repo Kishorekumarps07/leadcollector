@@ -1,14 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --secondary: #10b981;
-  --accent: #f59e0b;
+  /* Premium Gold Palette (Refined for Light Mode) */
+  --gold-light: #fef9c3;
+  --gold-main: #d4af37;
+  --gold-dark: #854d0e;
+  --gold-gradient: linear-gradient(135deg, #fef9c3 0%, #d4af37 50%, #854d0e 100%);
+
+  /* Alabaster & Zinc Base */
+  --primary: #d4af37;
+  --primary-hover: #b8962e;
+  --secondary: #3b82f6;
+  /* Lighter Blue accent for light mode */
+  --accent: #d4af37;
   --background: #ffffff;
-  --foreground: #0f172a;
+  /* Pure White */
+  --foreground: #09090b;
+  /* Zinc 950 (Black) */
   --surface: #f8fafc;
+  /* Slate 50 (Off-white) */
   --border: #e2e8f0;
+  /* Slate 200 (Light Border) */
 }
 
 @theme {
@@ -18,6 +30,11 @@
   --color-secondary: var(--secondary);
   --color-background-custom: var(--background);
   --color-foreground-custom: var(--foreground);
+
+  /* Map Gold Palette for Tailwind Utilities */
+  --color-gold-light: var(--gold-light);
+  --color-gold-main: var(--gold-main);
+  --color-gold-dark: var(--gold-dark);
 }
 
 body {
@@ -28,34 +45,39 @@ body {
 }
 
 .premium-card {
-  background: white;
+  background: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .premium-card:hover {
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+  border-color: var(--gold-main);
   transform: translateY(-2px);
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: white;
+  background: var(--gold-gradient);
+  color: #000;
+  /* Dark text on gold button */
   padding: 0.75rem 1.5rem;
   border-radius: 0.75rem;
-  font-weight: 600;
-  transition: all 0.2s;
+  font-weight: 700;
+  transition: all 0.3s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  border: none;
+  box-shadow: 0 4px 12px -2px rgba(212, 175, 55, 0.3);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
   transform: scale(1.02);
+  filter: brightness(1.05);
+  box-shadow: 0 8px 20px -4px rgba(212, 175, 55, 0.4);
 }
 
 .input-field {
@@ -63,12 +85,28 @@ body {
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
   border: 1px solid var(--border);
-  background-color: white;
+  background-color: #ffffff;
+  color: var(--foreground);
   transition: all 0.2s;
   outline: none;
 }
 
 .input-field:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.08);
+  background-color: #ffffff;
+}
+
+.gold-text {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.blue-orbit {
+  border: 3px solid #2563eb;
+  border-radius: 50%;
+  position: absolute;
 }

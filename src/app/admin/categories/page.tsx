@@ -15,7 +15,8 @@ import {
     LayoutGrid as LayoutGridIcon,
     MoreVertical,
     Pencil,
-    AlertTriangle
+    AlertTriangle,
+    RefreshCcw
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -190,10 +191,10 @@ export default function CategoriesPage() {
         <div className="flex flex-col h-full gap-4 lg:gap-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Categories & Fields</h1>
-                    <p className="text-slate-500 mt-1 text-sm">Create form categories and configure their fields.</p>
+                    <h1 className="text-2xl lg:text-3xl font-black text-black italic uppercase tracking-tight">Categories & Fields</h1>
+                    <p className="text-slate-500 mt-1 text-sm italic">Create form categories and configure their fields.</p>
                 </div>
-                <button onClick={() => setShowAddCategory(true)} className="btn-primary py-2.5 px-5 flex items-center justify-center gap-2 w-full sm:w-auto">
+                <button onClick={() => setShowAddCategory(true)} className="btn-primary py-2.5 px-5 flex items-center justify-center gap-2 w-full sm:w-auto uppercase font-black tracking-widest text-xs">
                     <Plus size={18} /> <span>New Category</span>
                 </button>
             </div>
@@ -201,9 +202,9 @@ export default function CategoriesPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 flex-1 overflow-hidden min-h-0">
                 {/* Categories Column */}
                 <div className={`bg-white premium-card flex flex-col overflow-hidden ${selectedCategory ? 'hidden lg:flex' : 'flex'}`}>
-                    <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-                        <h3 className="font-bold text-slate-900">Categories</h3>
-                        <span className="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{categories.length}</span>
+                    <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <h3 className="font-black text-black text-xs uppercase tracking-widest italic">Categories</h3>
+                        <span className="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full border border-slate-200">{categories.length}</span>
                     </div>
                     <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
                         {categories.length === 0 && (
@@ -213,15 +214,15 @@ export default function CategoriesPage() {
                             <div
                                 key={cat._id}
                                 className={`w-full p-4 rounded-xl flex items-center justify-between transition-all text-left group relative ${selectedCategory?._id === cat._id
-                                    ? 'bg-indigo-50 text-indigo-700'
-                                    : 'text-slate-600 hover:bg-slate-50'}`}
+                                    ? 'bg-gold-main/10 text-gold-dark border border-gold-main/20 shadow-sm'
+                                    : 'text-slate-500 hover:bg-slate-50'}`}
                             >
                                 <button onClick={() => handleSelectCategory(cat)} className="flex items-center gap-3 flex-1 min-w-0 text-left">
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${selectedCategory?._id === cat._id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${selectedCategory?._id === cat._id ? 'bg-gold-main text-black font-black' : 'bg-slate-100 text-slate-400'}`}>
                                         <LayoutGridIcon size={16} />
                                     </div>
                                     <div className="min-w-0">
-                                        <h4 className="text-sm font-bold truncate">{cat.name}</h4>
+                                        <h4 className="text-sm font-black italic">{cat.name}</h4>
                                         <p className="text-[10px] opacity-60 line-clamp-1">{cat.description || 'No description'}</p>
                                     </div>
                                 </button>
@@ -229,13 +230,13 @@ export default function CategoriesPage() {
                                 <div className="flex items-center gap-1">
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setEditingCat(cat); setEditName(cat.name); setEditDesc(cat.description || ''); }}
-                                        className="lg:opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
+                                        className="lg:opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-gold-dark hover:bg-white/5 rounded-lg transition-all"
                                     >
                                         <Pencil size={14} />
                                     </button>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setDeletingCatId(cat._id); }}
-                                        className="lg:opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-600 hover:bg-white rounded-lg transition-all"
+                                        className="lg:opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-500 hover:bg-white/5 rounded-lg transition-all"
                                     >
                                         <Trash2 size={14} />
                                     </button>
@@ -254,22 +255,22 @@ export default function CategoriesPage() {
                                 <div className="flex items-center gap-3 min-w-0">
                                     <button
                                         onClick={() => setSelectedCategory(null)}
-                                        className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-slate-600"
+                                        className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-black"
                                     >
                                         <ChevronRight size={20} className="rotate-180" />
                                     </button>
-                                    <div className="hidden xs:flex p-2 bg-indigo-600 text-white rounded-lg shadow-md shadow-indigo-100 flex-shrink-0">
+                                    <div className="hidden xs:flex p-2 bg-gold-main text-black rounded-lg shadow-md flex-shrink-0">
                                         <Settings2 size={18} />
                                     </div>
                                     <div className="min-w-0">
-                                        <h3 className="font-bold text-slate-900 text-sm lg:text-base truncate">{selectedCategory.name}</h3>
-                                        <p className="text-[10px] lg:text-xs text-slate-500">{fields.length} fields</p>
+                                        <h3 className="font-black text-black text-sm lg:text-base truncate italic uppercase tracking-tight">{selectedCategory.name}</h3>
+                                        <p className="text-[10px] lg:text-xs text-slate-500 font-bold uppercase tracking-widest">{fields.length} fields configured</p>
                                     </div>
                                 </div>
                                 {!showQuickAdd && (
                                     <button
                                         onClick={() => setShowQuickAdd(true)}
-                                        className="flex items-center gap-2 text-[10px] lg:text-xs font-bold text-indigo-600 hover:text-white hover:bg-indigo-600 bg-indigo-50 px-3 lg:px-4 py-2 rounded-xl transition-all flex-shrink-0"
+                                        className="flex items-center gap-2 text-[10px] lg:text-xs font-black text-gold-dark hover:text-black hover:bg-gold-main bg-gold-main/10 border border-gold-main/20 px-3 lg:px-4 py-2 rounded-xl transition-all flex-shrink-0 uppercase tracking-widest italic"
                                     >
                                         <Plus size={14} /> <span className="hidden sm:inline">Add Field</span><span className="sm:hidden">Add</span>
                                     </button>
@@ -282,43 +283,43 @@ export default function CategoriesPage() {
                                     <motion.div
                                         key={field._id}
                                         layout
-                                        className={`p-4 bg-white border rounded-xl flex items-center justify-between transition-all group ${field.is_system
-                                            ? 'border-indigo-100 bg-indigo-50/30'
-                                            : 'border-slate-200 hover:border-indigo-200 hover:shadow-sm'
+                                        className={`p-4 border rounded-xl flex items-center justify-between transition-all group ${field.is_system
+                                            ? 'border-gold-main/20 bg-gold-main/5'
+                                            : 'border-slate-100 bg-white hover:border-gold-main/30 hover:shadow-md'
                                             }`}
                                     >
                                         <div className="flex items-center gap-4">
                                             {field.is_system
-                                                ? <div className="text-indigo-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></div>
-                                                : <GripVertical className="text-slate-300 group-hover:text-indigo-400 cursor-grab" size={20} />}
+                                                ? <div className="text-gold-main/60"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></div>
+                                                : <GripVertical className="text-slate-300 group-hover:text-gold-main/60 cursor-grab" size={20} />}
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <h4 className="text-sm font-bold text-slate-900">{field.field_name}</h4>
-                                                    {field.required && <span className="text-[10px] font-bold text-red-500 uppercase bg-red-50 px-1 py-0.5 rounded">Required</span>}
-                                                    {field.is_system && <span className="text-[10px] font-bold text-indigo-500 uppercase bg-indigo-50 px-1.5 py-0.5 rounded-full">System</span>}
+                                                    <h4 className="text-sm font-black text-black italic">{field.field_name}</h4>
+                                                    {field.required && <span className="text-[10px] font-black text-red-600 uppercase bg-red-50 px-1 py-0.5 rounded border border-red-100">Required</span>}
+                                                    {field.is_system && <span className="text-[10px] font-black text-gold-dark uppercase bg-gold-main/10 px-1.5 py-0.5 rounded-full border border-gold-main/20">System</span>}
                                                 </div>
-                                                <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
-                                                    <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 font-mono text-[10px]">{field.field_type}</span>
+                                                <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2 italic">
+                                                    <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 font-mono text-[10px] capitalize">{field.field_type}</span>
                                                     {field.field_type === 'Dropdown' && field.options?.length > 0 && (
-                                                        <span className="text-slate-400">• {field.options.join(', ')}</span>
+                                                        <span className="text-slate-300">• {field.options.join(', ')}</span>
                                                     )}
                                                 </p>
                                             </div>
                                         </div>
                                         {field.is_system ? (
-                                            <span className="text-[10px] text-slate-400 italic px-2">Mandatory</span>
+                                            <span className="text-[10px] text-slate-300 italic px-2">Mandatory</span>
                                         ) : (
                                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                                                 <button
                                                     onClick={() => openEditField(field)}
-                                                    className="p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                                                    className="p-2 text-slate-400 hover:text-gold-dark hover:bg-slate-100 rounded-lg transition-all"
                                                     title="Edit field"
                                                 >
                                                     <Pencil size={15} />
                                                 </button>
                                                 <button
                                                     onClick={() => field._id && handleDeleteField(field._id)}
-                                                    className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                                                     title="Delete field"
                                                 >
                                                     <Trash2 size={15} />
@@ -335,14 +336,14 @@ export default function CategoriesPage() {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 10 }}
-                                            className="border-2 border-indigo-300 border-dashed rounded-2xl p-5 space-y-4 bg-indigo-50/30"
+                                            className="border-2 border-gold-main/20 border-dashed rounded-2xl p-5 space-y-4 bg-slate-50"
                                         >
                                             {/* Field Name */}
                                             <input
                                                 ref={nameRef}
                                                 type="text"
                                                 placeholder="Field name (e.g. Manager Name)"
-                                                className="input-field w-full font-bold text-slate-800 text-base"
+                                                className="input-field w-full font-black text-black text-base italic uppercase"
                                                 value={quickName}
                                                 onChange={e => setQuickName(e.target.value)}
                                                 onKeyDown={e => e.key === 'Enter' && handleSaveField()}
@@ -355,9 +356,9 @@ export default function CategoriesPage() {
                                                         key={t}
                                                         type="button"
                                                         onClick={() => setQuickType(t)}
-                                                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${quickType === t
-                                                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-                                                            : 'bg-white border border-slate-200 text-slate-600 hover:border-indigo-300'}`}
+                                                        className={`px-3 py-1.5 rounded-full text-xs font-black transition-all uppercase tracking-widest italic ${quickType === t
+                                                            ? 'bg-gold-main text-black shadow-md border border-gold-main'
+                                                            : 'bg-white border border-slate-200 text-slate-500 hover:border-gold-main/30'}`}
                                                     >
                                                         {t}
                                                     </button>
@@ -380,27 +381,27 @@ export default function CategoriesPage() {
                                                 <label className="flex items-center gap-2 cursor-pointer select-none">
                                                     <div
                                                         onClick={() => setQuickRequired(!quickRequired)}
-                                                        className={`w-10 h-5 rounded-full transition-all relative ${quickRequired ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                                                        className={`w-10 h-5 rounded-full transition-all relative ${quickRequired ? 'bg-gold-main' : 'bg-slate-200'}`}
                                                     >
                                                         <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${quickRequired ? 'left-5' : 'left-0.5'}`} />
                                                     </div>
-                                                    <span className="text-sm font-bold text-slate-700">Required</span>
+                                                    <span className="text-sm font-black text-slate-600 italic">Required Field</span>
                                                 </label>
 
                                                 <div className="flex gap-2">
                                                     <button
                                                         onClick={() => { setShowQuickAdd(false); setQuickName(''); setQuickType('Text'); setQuickOptions(''); }}
-                                                        className="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-all"
+                                                        className="px-4 py-2 text-sm font-black text-slate-400 hover:text-black rounded-xl transition-all uppercase italic tracking-widest"
                                                     >
                                                         Cancel
                                                     </button>
                                                     <button
                                                         onClick={handleSaveField}
                                                         disabled={!quickName.trim() || saving}
-                                                        className="px-5 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 disabled:opacity-40 flex items-center gap-2 transition-all"
+                                                        className="px-5 py-2 bg-gold-gradient text-black text-sm font-black rounded-xl hover:brightness-110 disabled:opacity-40 flex items-center gap-2 transition-all shadow-lg shadow-gold-main/20"
                                                     >
                                                         <Check size={16} />
-                                                        {saving ? 'Saving...' : 'Save Field'}
+                                                        {saving ? 'Creating...' : 'Create Field'}
                                                     </button>
                                                 </div>
                                             </div>
@@ -410,12 +411,12 @@ export default function CategoriesPage() {
 
                                 {fields.length === 0 && !showQuickAdd && (
                                     <div className="py-20 text-center">
-                                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                        <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gold-dark/40">
                                             <ListTree size={32} />
                                         </div>
-                                        <p className="text-sm text-slate-400 font-medium">No fields yet for this category.</p>
-                                        <button onClick={() => setShowQuickAdd(true)} className="mt-4 text-indigo-600 text-sm font-bold hover:underline">
-                                            + Add your first field
+                                        <p className="text-sm text-slate-300 font-black uppercase italic tracking-widest">No fields defined for this category.</p>
+                                        <button onClick={() => setShowQuickAdd(true)} className="mt-4 text-gold-dark text-sm font-black hover:text-black tracking-widest italic animate-pulse">
+                                            + ADD YOUR FIRST FIELD
                                         </button>
                                     </div>
                                 )}
@@ -423,11 +424,11 @@ export default function CategoriesPage() {
                         </>
                     ) : (
                         <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
-                            <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mb-6 animate-pulse">
+                            <div className="w-20 h-20 bg-gold-main/10 text-gold-main/40 rounded-full flex items-center justify-center mb-6 animate-pulse border border-gold-main/20 shadow-sm">
                                 <Settings size={40} />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900">Select a Category</h3>
-                            <p className="text-slate-500 mt-2 max-w-xs text-sm">Pick a category on the left to configure its form fields.</p>
+                            <h3 className="text-xl font-black text-black italic uppercase tracking-tight">Select a Category</h3>
+                            <p className="text-slate-300 mt-2 max-w-xs text-sm italic font-medium">Choose a data category from the left panel to configure its dynamic fields.</p>
                         </div>
                     )}
                 </div>
@@ -436,25 +437,25 @@ export default function CategoriesPage() {
             {/* Add Category Modal */}
             <AnimatePresence>
                 {showAddCategory && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={() => setShowAddCategory(false)}>
-                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-                            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
-                                <h3 className="text-xl font-black text-slate-900">New Category</h3>
-                                <button onClick={() => setShowAddCategory(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-6" onClick={() => setShowAddCategory(false)}>
+                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+                            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                <h3 className="text-xl font-black text-black italic">New Category</h3>
+                                <button onClick={() => setShowAddCategory(false)} className="text-slate-400 hover:text-black"><X size={20} /></button>
                             </div>
                             <div className="p-8 space-y-5">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Category Name</label>
-                                    <input type="text" placeholder="e.g. Vendors, Gyms, Leads..." className="input-field" value={newCatName} onChange={e => setNewCatName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAddCategory()} autoFocus />
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic">Category Title</label>
+                                    <input type="text" placeholder="e.g. Vendors, Gyms, Leads..." className="input-field bg-white" value={newCatName} onChange={e => setNewCatName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAddCategory()} autoFocus />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Description <span className="text-slate-400 font-normal normal-case">(optional)</span></label>
-                                    <input type="text" placeholder="What kind of data does this collect?" className="input-field" value={newCatDesc} onChange={e => setNewCatDesc(e.target.value)} />
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic">Description <span className="text-slate-300 font-normal normal-case">(optional)</span></label>
+                                    <input type="text" placeholder="Mission or data collection scope..." className="input-field bg-white" value={newCatDesc} onChange={e => setNewCatDesc(e.target.value)} />
                                 </div>
                             </div>
-                            <div className="px-8 py-5 bg-slate-50 flex gap-4">
-                                <button onClick={() => setShowAddCategory(false)} className="flex-1 py-3 text-sm font-bold text-slate-500 hover:text-slate-700">Cancel</button>
-                                <button onClick={handleAddCategory} disabled={!newCatName.trim()} className="flex-1 btn-primary py-3 disabled:opacity-40">Create</button>
+                            <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex gap-4">
+                                <button onClick={() => setShowAddCategory(false)} className="flex-1 py-3 text-sm font-black text-slate-400 hover:text-black uppercase tracking-widest italic">Cancel</button>
+                                <button onClick={handleAddCategory} disabled={!newCatName.trim()} className="flex-1 btn-primary py-3 disabled:opacity-40 uppercase tracking-widest">Create</button>
                             </div>
                         </motion.div>
                     </motion.div>
@@ -462,25 +463,25 @@ export default function CategoriesPage() {
 
                 {/* Edit Category Modal */}
                 {editingCat && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={() => setEditingCat(null)}>
-                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-                            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
-                                <h3 className="text-xl font-black text-slate-900">Edit Category</h3>
-                                <button onClick={() => setEditingCat(null)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-6" onClick={() => setEditingCat(null)}>
+                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+                            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                <h3 className="text-xl font-black text-black italic">Edit Category Settings</h3>
+                                <button onClick={() => setEditingCat(null)} className="text-slate-400 hover:text-black"><X size={20} /></button>
                             </div>
                             <div className="p-8 space-y-5">
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Category Name</label>
-                                    <input type="text" className="input-field" value={editName} onChange={e => setEditName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleEditCategory()} autoFocus />
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic">Category Title</label>
+                                    <input type="text" className="input-field bg-white" value={editName} onChange={e => setEditName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleEditCategory()} autoFocus />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Description</label>
-                                    <input type="text" className="input-field" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic">Description Meta</label>
+                                    <input type="text" className="input-field bg-white" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
                                 </div>
                             </div>
-                            <div className="px-8 py-5 bg-slate-50 flex gap-4">
-                                <button onClick={() => setEditingCat(null)} className="flex-1 py-3 text-sm font-bold text-slate-500 hover:text-slate-700">Cancel</button>
-                                <button onClick={handleEditCategory} disabled={!editName.trim()} className="flex-1 btn-primary py-3 disabled:opacity-40 flex items-center justify-center gap-2"><Check size={16} /> Save Changes</button>
+                            <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex gap-4">
+                                <button onClick={() => setEditingCat(null)} className="flex-1 py-3 text-sm font-black text-slate-400 hover:text-black uppercase tracking-widest italic">Cancel</button>
+                                <button onClick={handleEditCategory} disabled={!editName.trim()} className="flex-1 btn-primary py-3 disabled:opacity-40 flex items-center justify-center gap-2 uppercase tracking-widest italic"><Check size={16} /> Update</button>
                             </div>
                         </motion.div>
                     </motion.div>
@@ -488,40 +489,40 @@ export default function CategoriesPage() {
 
                 {/* Delete Confirm Modal */}
                 {deletingCatId && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={() => setDeletingCatId(null)}>
-                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
-                            <div className="p-8 text-center">
-                                <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 backdrop-blur-md z-50 flex items-center justify-center p-6" onClick={() => setDeletingCatId(null)}>
+                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white border border-red-100 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
+                            <div className="p-8 text-center text-black">
+                                <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5 border border-red-100 shadow-sm">
                                     <AlertTriangle size={32} />
                                 </div>
-                                <h3 className="text-xl font-black text-slate-900 mb-2">Delete Category?</h3>
-                                <p className="text-sm text-slate-500">This will permanently delete the category, all its fields, and <span className="font-bold text-red-600">all associated records</span>. This cannot be undone.</p>
+                                <h3 className="text-xl font-black italic mb-2">Nuclear Action?</h3>
+                                <p className="text-sm text-slate-500">This will permanently delete the category and <span className="font-black text-red-600 underline uppercase tracking-tighter">all associated records</span>. This is irreversible.</p>
                             </div>
-                            <div className="px-8 py-5 bg-slate-50 flex gap-4">
-                                <button onClick={() => setDeletingCatId(null)} className="flex-1 py-3 text-sm font-bold text-slate-500 hover:text-slate-700">Cancel</button>
-                                <button onClick={() => handleDeleteCategory(deletingCatId)} className="flex-1 py-3 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 transition-all flex items-center justify-center gap-2"><Trash2 size={16} /> Delete</button>
+                            <div className="px-8 py-6 bg-slate-50 border-t border-red-50 flex gap-4">
+                                <button onClick={() => setDeletingCatId(null)} className="flex-1 py-3 text-sm font-black text-slate-400 hover:text-black uppercase tracking-widest italic">Abort</button>
+                                <button onClick={() => handleDeleteCategory(deletingCatId)} className="flex-1 py-3 bg-red-600 text-white font-black rounded-2xl hover:bg-red-700 transition-all flex items-center justify-center gap-2 uppercase tracking-widest italic">Confirm</button>
                             </div>
                         </motion.div>
                     </motion.div>
                 )}
                 {/* Edit Field Modal */}
                 {editingField && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-6" onClick={() => setEditingField(null)}>
-                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-                            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/40 backdrop-blur-md z-50 flex items-center justify-center p-6" onClick={() => setEditingField(null)}>
+                        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} onClick={e => e.stopPropagation()} className="bg-white border border-slate-200 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+                            <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                                 <div>
-                                    <h3 className="text-xl font-black text-slate-900">Edit Field</h3>
-                                    <p className="text-xs text-slate-500 mt-0.5">Update field settings</p>
+                                    <h3 className="text-xl font-black text-black italic">Modify Field Nexus</h3>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-0.5 font-bold">Update operational parameters</p>
                                 </div>
-                                <button onClick={() => setEditingField(null)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+                                <button onClick={() => setEditingField(null)} className="text-slate-400 hover:text-black"><X size={20} /></button>
                             </div>
-                            <div className="p-8 space-y-5">
+                            <div className="p-8 space-y-6">
                                 {/* Field Name */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Field Name</label>
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic">Field Label</label>
                                     <input
                                         type="text"
-                                        className="input-field"
+                                        className="input-field bg-white text-black font-black italic uppercase"
                                         value={editFieldName}
                                         onChange={e => setEditFieldName(e.target.value)}
                                         autoFocus
@@ -529,14 +530,14 @@ export default function CategoriesPage() {
                                 </div>
 
                                 {/* Field Type */}
-                                <div className="space-y-2">
-                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Field Type</label>
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic">Intelligence Type</label>
                                     <div className="flex flex-wrap gap-2">
                                         {FIELD_TYPES.map(t => (
                                             <button
                                                 key={t}
                                                 onClick={() => setEditFieldType(t)}
-                                                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${editFieldType === t ? 'bg-indigo-600 text-white shadow-md shadow-indigo-100' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                                                className={`px-3 py-1.5 rounded-xl text-[10px] uppercase tracking-widest font-black transition-all border italic ${editFieldType === t ? 'bg-gold-main text-black border-gold-main shadow-md' : 'bg-slate-50 text-slate-400 border-slate-200 hover:border-gold-main/30'}`}
                                             >
                                                 {t}
                                             </button>
@@ -546,12 +547,12 @@ export default function CategoriesPage() {
 
                                 {/* Dropdown Options */}
                                 {editFieldType === 'Dropdown' && (
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Options <span className="text-slate-400 font-normal normal-case">(comma-separated)</span></label>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-gold-dark uppercase tracking-[0.2em] italic">Selection Node Options <span className="text-slate-300 font-normal normal-case">(comma-separated)</span></label>
                                         <input
                                             type="text"
-                                            className="input-field"
-                                            placeholder="e.g. Home services, Online services, Retail"
+                                            className="input-field bg-white text-black font-black italic uppercase"
+                                            placeholder="e.g. Value 1, Value 2, Value 3"
                                             value={editFieldOptions}
                                             onChange={e => setEditFieldOptions(e.target.value)}
                                         />
@@ -559,27 +560,27 @@ export default function CategoriesPage() {
                                 )}
 
                                 {/* Required toggle */}
-                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                                <div className="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-gold-main/20">
                                     <div>
-                                        <p className="text-sm font-bold text-slate-800">Required Field</p>
-                                        <p className="text-xs text-slate-400">Agents must fill this field</p>
+                                        <p className="text-xs font-black text-black italic uppercase tracking-widest">Strict Validation</p>
+                                        <p className="text-[10px] text-slate-400 italic font-bold uppercase">Enforce data entry on this node</p>
                                     </div>
                                     <button
                                         onClick={() => setEditFieldRequired(!editFieldRequired)}
-                                        className={`w-12 h-6 rounded-full transition-all relative ${editFieldRequired ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                                        className={`w-12 h-6 rounded-full transition-all relative border ${editFieldRequired ? 'bg-gold-main/20 border-gold-main/40' : 'bg-slate-200 border-slate-300'}`}
                                     >
-                                        <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${editFieldRequired ? 'left-7' : 'left-1'}`} />
+                                        <span className={`absolute top-0.5 w-4.5 h-4.5 rounded-full shadow-lg transition-all ${editFieldRequired ? 'left-6 bg-gold-main' : 'left-0.5 bg-white'}`} />
                                     </button>
                                 </div>
                             </div>
-                            <div className="px-8 py-5 bg-slate-50 flex gap-4">
-                                <button onClick={() => setEditingField(null)} className="flex-1 py-3 text-sm font-bold text-slate-500 hover:text-slate-700">Cancel</button>
+                            <div className="px-8 py-6 bg-slate-50 border-t border-slate-100 flex gap-4">
+                                <button onClick={() => setEditingField(null)} className="flex-1 py-3 text-[10px] font-black text-slate-400 hover:text-black uppercase tracking-[0.2em] italic">Abort</button>
                                 <button
                                     onClick={handleEditField}
                                     disabled={!editFieldName.trim() || savingField}
-                                    className="flex-1 btn-primary py-3 disabled:opacity-40 flex items-center justify-center gap-2"
+                                    className="flex-1 btn-primary py-3 disabled:opacity-40 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] italic"
                                 >
-                                    {savingField ? <ListTree className="animate-spin" size={16} /> : <Check size={16} />} Save Field
+                                    {savingField ? <RefreshCcw className="animate-spin" size={16} /> : <Check size={16} />} Seal Field
                                 </button>
                             </div>
                         </motion.div>
