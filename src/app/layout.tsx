@@ -10,6 +10,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: 'Promptix Tech Solutions | Data Collection Tool',
   description: 'Advanced data collection and analytics platform by Promptix tech solutions',
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 import { AuthProvider } from "@/context/AuthContext";
