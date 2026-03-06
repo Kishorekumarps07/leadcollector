@@ -68,14 +68,14 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 lg:space-y-8">
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Dashboard Overview</h1>
+                    <h1 className="text-2xl lg:text-3xl font-bold text-slate-900 leading-tight">Dashboard Overview</h1>
                     <p className="text-slate-500 mt-1 text-sm">Welcome back — here's what's happening today.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                     <button
                         onClick={fetchStats}
                         className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-300 transition-all"
@@ -85,34 +85,35 @@ export default function AdminDashboard() {
                     </button>
                     <button
                         onClick={handleExport}
-                        className="btn-primary py-2 px-4 text-sm flex items-center gap-2"
+                        className="btn-primary py-2 px-4 text-sm flex items-center justify-center gap-2 w-full sm:w-auto"
                     >
-                        <Download size={16} /> Export Data
+                        <Download size={16} className="flex-shrink-0" />
+                        <span>Export Data</span>
                     </button>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 {statCards.map((stat, i) => (
                     <motion.div
                         key={stat.label}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.08 }}
-                        className="premium-card p-6 bg-white"
+                        className="premium-card p-5 lg:p-6 bg-white"
                     >
                         <div className="flex items-start justify-between">
-                            <div className={`p-3 rounded-xl bg-${stat.color}-50 text-${stat.color}-600`}>
-                                <stat.icon size={22} />
+                            <div className={`p-2.5 lg:p-3 rounded-xl bg-${stat.color}-50 text-${stat.color}-600`}>
+                                <stat.icon size={20} className="lg:w-[22px] lg:h-[22px]" />
                             </div>
-                            <span className="flex items-center gap-1 text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-1 rounded-full">
-                                <TrendingUp size={12} /> Live
+                            <span className="flex items-center gap-1 text-emerald-600 text-[10px] lg:text-xs font-bold bg-emerald-50 px-2 py-1 rounded-full">
+                                <TrendingUp size={10} className="lg:w-[12px] lg:h-[12px]" /> Live
                             </span>
                         </div>
                         <div className="mt-4">
-                            <p className="text-sm font-medium text-slate-500">{stat.label}</p>
-                            <h3 className="text-3xl font-black text-slate-900 mt-1">{stat.value}</h3>
+                            <p className="text-xs lg:text-sm font-medium text-slate-500">{stat.label}</p>
+                            <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mt-1">{stat.value}</h3>
                         </div>
                     </motion.div>
                 ))}
@@ -121,11 +122,11 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Recent Submissions */}
                 <div className="lg:col-span-2 premium-card bg-white overflow-hidden">
-                    <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                        <h3 className="font-bold text-slate-900">Recent Submissions</h3>
+                    <div className="p-5 lg:p-6 border-b border-slate-100 flex items-center justify-between">
+                        <h3 className="font-bold text-slate-900 text-sm lg:text-base">Recent Submissions</h3>
                         <button
                             onClick={() => router.push('/admin/explorer')}
-                            className="text-xs font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider flex items-center gap-1"
+                            className="text-[10px] lg:text-xs font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider flex items-center gap-1"
                         >
                             View All <ChevronRight size={14} />
                         </button>
@@ -135,26 +136,26 @@ export default function AdminDashboard() {
                             <div className="p-10 text-center text-slate-400 italic text-sm">No submissions yet.</div>
                         )}
                         {stats?.recentSubmissions?.map((record: any) => (
-                            <div key={record._id} className="px-6 py-4 hover:bg-slate-50/50 transition-colors flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm uppercase flex-shrink-0">
+                            <div key={record._id} className="px-5 lg:px-6 py-4 hover:bg-slate-50/50 transition-colors flex items-center gap-3 lg:gap-4">
+                                <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-xs lg:text-sm uppercase flex-shrink-0">
                                     {record.category_id?.name?.substring(0, 2) || 'RE'}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-bold text-slate-900">{record.category_id?.name || 'Unknown Category'}</p>
-                                    <p className="text-xs text-slate-500 mt-0.5">
+                                    <p className="text-sm font-bold text-slate-900 truncate">{record.category_id?.name || 'Unknown Category'}</p>
+                                    <p className="text-[10px] lg:text-xs text-slate-500 mt-0.5 truncate">
                                         by <span className="font-bold text-slate-700">{record.agent_id?.name || 'Unknown Agent'}</span>
                                     </p>
                                 </div>
-                                <div className="text-right flex-shrink-0">
-                                    <p className="text-xs text-slate-400 flex items-center gap-1 justify-end">
-                                        <Calendar size={11} />
+                                <div className="text-right flex-shrink-0 hidden xs:block">
+                                    <p className="text-[10px] lg:text-xs text-slate-400 flex items-center gap-1 justify-end">
+                                        <Calendar size={10} />
                                         {new Date(record.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                                     </p>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">
+                                    <p className="text-[9px] lg:text-[10px] text-slate-400 mt-0.5">
                                         {new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </p>
                                 </div>
-                                <span className="flex-shrink-0 text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100">
+                                <span className="flex-shrink-0 text-[9px] lg:text-[10px] font-bold text-emerald-600 uppercase bg-emerald-50 px-1.5 lg:px-2 py-1 rounded-full border border-emerald-100">
                                     Synced
                                 </span>
                             </div>

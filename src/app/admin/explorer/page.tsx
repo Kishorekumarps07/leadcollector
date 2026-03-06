@@ -181,41 +181,43 @@ function DataExplorerContent() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Data Explorer</h1>
+                    <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Data Explorer</h1>
                     <p className="text-slate-500 mt-1 text-sm">All data submitted by your field agents.</p>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                    <button onClick={fetchAll} className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-300 transition-all" title="Refresh"><RefreshCcw size={16} /></button>
-                    <button onClick={() => setShowImport(true)} className="flex items-center gap-1.5 px-3 py-2 bg-white border border-emerald-300 text-emerald-700 text-xs font-bold rounded-xl hover:bg-emerald-50 transition-all"><FileUp size={15} /> <span className="hidden sm:inline">Import</span></button>
-                    <button onClick={() => setShowExport(true)} className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all"><FileDown size={15} /> <span className="hidden sm:inline">Export</span></button>
+                <div className="grid grid-cols-3 sm:flex items-center gap-2 flex-shrink-0">
+                    <button onClick={fetchAll} className="flex items-center justify-center p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 hover:border-indigo-300 transition-all" title="Refresh"><RefreshCcw size={16} /></button>
+                    <button onClick={() => setShowImport(true)} className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white border border-emerald-300 text-emerald-700 text-[10px] lg:text-xs font-bold rounded-xl hover:bg-emerald-50 transition-all"><FileUp size={15} /> <span>Import</span></button>
+                    <button onClick={() => setShowExport(true)} className="flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 text-white text-[10px] lg:text-xs font-bold rounded-xl hover:bg-indigo-700 transition-all"><FileDown size={15} /> <span>Export</span></button>
                 </div>
             </div>
 
             {/* Filter Bar */}
-            <div className="flex flex-wrap items-center gap-3 bg-white border border-slate-100 rounded-2xl px-5 py-4 shadow-sm">
-                <div className="relative flex-1 min-w-[200px]">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-3 bg-white border border-slate-100 rounded-2xl px-4 lg:px-5 py-4 shadow-sm">
+                <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-                    <input type="text" placeholder="Search by agent, category, or any value..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-slate-50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-200 border border-transparent focus:border-indigo-300" />
+                    <input type="text" placeholder="Search data..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2 bg-slate-50 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-200 border border-transparent focus:border-indigo-300" />
                 </div>
-                <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
-                    <select value={selectedAgent} onChange={e => setSelectedAgent(e.target.value)} className="pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-indigo-200 appearance-none cursor-pointer">
-                        <option value="all">All Agents</option>
-                        {agents.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                <div className="grid grid-cols-2 lg:flex items-center gap-3">
+                    <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                        <select value={selectedAgent} onChange={e => setSelectedAgent(e.target.value)} className="w-full pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-indigo-200 appearance-none cursor-pointer">
+                            <option value="all">All Agents</option>
+                            {agents.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
+                        </select>
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                    </div>
+                    <div className="relative">
+                        <Database className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                        <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="w-full pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-indigo-200 appearance-none cursor-pointer">
+                            <option value="all">Categories</option>
+                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                        <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
+                    </div>
                 </div>
-                <div className="relative">
-                    <Database className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
-                    <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="pl-8 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-indigo-200 appearance-none cursor-pointer">
-                        <option value="all">All Categories</option>
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
-                </div>
-                <span className="ml-auto text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1.5 rounded-full">{filtered.length} record{filtered.length !== 1 ? 's' : ''}</span>
+                <div className="hidden lg:flex ml-auto text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1.5 rounded-full">{filtered.length} records</div>
             </div>
 
             {/* Table */}

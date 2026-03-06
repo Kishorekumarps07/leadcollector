@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${plusJakartaSans.variable} antialiased`}>
+      <body className={`${plusJakartaSans.variable} antialiased`} suppressHydrationWarning>
         <AuthProvider>
           <main className="min-h-screen bg-slate-50 transition-colors duration-500">
             {children}

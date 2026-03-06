@@ -62,48 +62,61 @@ export default function TrackingPage() {
     return (
         <div className="space-y-4 h-full flex flex-col">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 lg:gap-4 flex-shrink-0">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Agent Tracking</h1>
-                    <p className="text-slate-500 mt-1 text-sm">Live field locations based on latest submissions.</p>
+                    <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Agent Tracking</h1>
+                    <p className="text-slate-500 mt-1 text-sm">Live field locations from latest submissions.</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 lg:gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full font-bold text-[10px] lg:text-xs">
+                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                        Live
+                    </div>
                     {mounted && (
-                        <span className="text-xs text-slate-400 font-medium">
-                            Last updated: {lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        <span className="text-[10px] lg:text-xs text-slate-400 font-medium">
+                            {lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                     )}
                     <button
                         onClick={fetchTracking}
                         disabled={loading}
-                        className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 transition-all text-sm font-bold shadow-sm"
+                        className="flex items-center justify-center p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 transition-all font-bold shadow-sm disabled:opacity-50"
                     >
                         <RefreshCcw size={16} className={loading ? 'animate-spin' : ''} />
-                        Refresh
                     </button>
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-full font-bold text-xs">
-                        <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                        Live
-                    </div>
+                    <button
+                        onClick={() => setSelectedAgent(null)}
+                        className={`lg:hidden flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${!selectedAgent ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-white border border-slate-200 text-slate-500'}`}
+                    >
+                        List
+                    </button>
+                    {agentsWithLocation.length > 0 && (
+                        <button
+                            onClick={() => !selectedAgent && setSelectedAgent(agentsWithLocation[0])}
+                            className={`lg:hidden flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${selectedAgent ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-white border border-slate-200 text-slate-500'}`}
+                        >
+                            Map
+                        </button>
+                    )}
                 </div>
             </div>
 
             {error && (
-                <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-bold">
-                    <AlertCircle size={18} />
+                <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold">
+                    <AlertCircle size={18} className="flex-shrink-0" />
                     {error}
                 </div>
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 flex-1 min-h-0">
                 {/* Agent List */}
-                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col overflow-hidden">
-                    <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                <div className={`bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col overflow-hidden ${selectedAgent ? 'hidden lg:flex' : 'flex'}`}>
+                    <div className="p-4 border-b border-slate-100 flex items-center justify-between flex-shrink-0">
                         <div className="flex items-center gap-2">
                             <Users size={16} className="text-slate-400" />
                             <h3 className="font-bold text-sm text-slate-900">Field Agents</h3>
                         </div>
-                        <span className="text-xs font-black text-slate-400">{agents.length} total</span>
+                        <span className="text-[10px] font-black text-slate-400">{agents.length} total</span>
                     </div>
 
                     <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
@@ -177,7 +190,7 @@ export default function TrackingPage() {
                 </div>
 
                 {/* Map */}
-                <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col" style={{ minHeight: '500px' }}>
+                <div className={`lg:col-span-3 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col ${selectedAgent ? 'flex' : 'hidden lg:flex'}`} style={{ minHeight: '400px', height: '100%' }}>
                     {agentsWithLocation.length === 0 && !loading ? (
                         <div className="flex-1 flex items-center justify-center flex-col gap-4 text-center p-12">
                             <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400">
@@ -185,7 +198,7 @@ export default function TrackingPage() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-slate-700">No Location Data Available</h3>
-                                <p className="text-sm text-slate-400 mt-1 max-w-sm">Agents appear on the map once they submit data with GPS coordinates enabled on their device.</p>
+                                <p className="text-sm text-slate-400 mt-1 max-w-sm">Agents appear on the map once they submit data with GPS coordinates enabled.</p>
                             </div>
                         </div>
                     ) : (

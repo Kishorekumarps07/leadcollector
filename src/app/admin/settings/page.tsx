@@ -166,16 +166,16 @@ export default function SettingsPage() {
                 <p className="text-slate-500 mt-1">Configure your organization preferences and application defaults.</p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-8 mt-8">
-                {/* Sidebar Tabs */}
-                <div className="w-full md:w-56 space-y-1 flex-shrink-0">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mt-4 lg:mt-8">
+                {/* Sidebar Tabs - Horizontal Scroll on Mobile */}
+                <div className="w-full lg:w-56 flex lg:flex-col overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 gap-2 flex-shrink-0 custom-scrollbar no-scrollbar">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === tab.id
-                                ? 'bg-white text-indigo-600 shadow-sm border border-slate-100 font-black'
-                                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50 font-bold'}`}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left whitespace-nowrap min-w-max lg:min-w-0 lg:w-full ${activeTab === tab.id
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 font-bold'
+                                : 'bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-100/50 border border-slate-100 lg:border-transparent'}`}
                         >
                             <tab.icon size={18} />
                             <span className="text-sm">{tab.label}</span>
@@ -184,13 +184,13 @@ export default function SettingsPage() {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                     <motion.div
                         key={activeTab}
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8"
+                        className="bg-white rounded-3xl border border-slate-100 shadow-sm p-4 lg:p-8"
                     >
                         {/* ACCOUNT TAB */}
                         {activeTab === 'account' && (

@@ -127,38 +127,38 @@ export default function AgentManagementPage() {
             </div>
 
             {/* Summary Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                 {[
                     { label: 'Total Agents', value: stats.total, icon: Users, color: 'indigo' },
                     { label: 'Active Agents', value: stats.active, icon: CheckCircle, color: 'emerald' },
                     { label: 'Total Submissions', value: stats.submissions, icon: TrendingUp, color: 'blue' }
                 ].map((s, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-                        <div className={`p-4 bg-${s.color}-50 text-${s.color}-600 rounded-2xl`}><s.icon size={24} /></div>
-                        <div><p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{s.label}</p><p className="text-2xl font-black text-slate-900">{s.value}</p></div>
+                    <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-white p-5 lg:p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                        <div className={`p-3 lg:p-4 bg-${s.color}-50 text-${s.color}-600 rounded-2xl`}><s.icon size={20} className="lg:w-[24px] lg:h-[24px]" /></div>
+                        <div><p className="text-[10px] lg:text-sm font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">{s.label}</p><p className="text-xl lg:text-2xl font-black text-slate-900 leading-none">{s.value}</p></div>
                     </motion.div>
                 ))}
             </div>
 
             {/* Content Card */}
-            <div className="premium-card bg-white shadow-sm border border-slate-100">
-                <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-4">
-                    <div className="relative flex-1 min-w-[300px]">
+            <div className="premium-card bg-white shadow-sm border border-slate-100 overflow-hidden">
+                <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                    <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                        <input type="text" placeholder="Search by name or email..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-300 transition-all" />
+                        <input type="text" placeholder="Search team..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-300 transition-all" />
                     </div>
-                    <button onClick={fetchAgents} className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 transition-all flex items-center gap-2 text-sm font-bold">
-                        <RefreshCcw size={16} className={loading ? 'animate-spin' : ''} /> Refresh
+                    <button onClick={fetchAgents} className="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-indigo-600 transition-all flex items-center justify-center gap-2 text-sm font-bold">
+                        <RefreshCcw size={16} className={loading ? 'animate-spin' : ''} /> <span className="sm:hidden lg:inline">Refresh</span>
                     </button>
                 </div>
 
-                <div className="overflow-x-auto pb-48">
-                    <table className="w-full text-left border-collapse">
+                <div className="overflow-x-auto pb-48 custom-scrollbar">
+                    <table className="w-full text-left border-collapse min-w-[800px] lg:min-w-0">
                         <thead>
                             <tr className="bg-slate-50/80 border-b border-slate-100">
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Agent Info</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Performance</th>
-                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last Active</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:table-cell">Performance</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Activity</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Status</th>
                                 <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Actions</th>
                             </tr>

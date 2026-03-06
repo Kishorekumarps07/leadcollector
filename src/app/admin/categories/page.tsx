@@ -187,25 +187,25 @@ export default function CategoriesPage() {
     };
 
     return (
-        <div className="flex flex-col h-full gap-8">
-            <div className="flex items-center justify-between">
+        <div className="flex flex-col h-full gap-4 lg:gap-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Categories & Fields</h1>
+                    <h1 className="text-2xl lg:text-3xl font-bold text-slate-900">Categories & Fields</h1>
                     <p className="text-slate-500 mt-1 text-sm">Create form categories and configure their fields.</p>
                 </div>
-                <button onClick={() => setShowAddCategory(true)} className="btn-primary py-2.5 px-5 flex items-center gap-2">
-                    <Plus size={18} /> New Category
+                <button onClick={() => setShowAddCategory(true)} className="btn-primary py-2.5 px-5 flex items-center justify-center gap-2 w-full sm:w-auto">
+                    <Plus size={18} /> <span>New Category</span>
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 flex-1 overflow-hidden min-h-0">
                 {/* Categories Column */}
-                <div className="bg-white premium-card flex flex-col overflow-hidden">
+                <div className={`bg-white premium-card flex flex-col overflow-hidden ${selectedCategory ? 'hidden lg:flex' : 'flex'}`}>
                     <div className="p-5 border-b border-slate-100 flex items-center justify-between">
                         <h3 className="font-bold text-slate-900">Categories</h3>
                         <span className="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">{categories.length}</span>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-2 space-y-1">
+                    <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
                         {categories.length === 0 && (
                             <p className="text-center text-sm text-slate-400 py-10 italic">No categories yet.</p>
                         )}
@@ -226,38 +226,19 @@ export default function CategoriesPage() {
                                     </div>
                                 </button>
 
-                                {/* 3-dot menu */}
-                                <div className="relative flex-shrink-0 ml-2" onClick={e => e.stopPropagation()}>
+                                <div className="flex items-center gap-1">
                                     <button
-                                        onClick={() => setActiveMenuId(activeMenuId === cat._id ? null : cat._id)}
-                                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-white/80 opacity-0 group-hover:opacity-100 transition-all"
+                                        onClick={(e) => { e.stopPropagation(); setEditingCat(cat); setEditName(cat.name); setEditDesc(cat.description || ''); }}
+                                        className="lg:opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
                                     >
-                                        <MoreVertical size={14} />
+                                        <Pencil size={14} />
                                     </button>
-
-                                    <AnimatePresence>
-                                        {activeMenuId === cat._id && (
-                                            <motion.div
-                                                initial={{ opacity: 0, scale: 0.92, y: -4 }}
-                                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                                exit={{ opacity: 0, scale: 0.92, y: -4 }}
-                                                className="absolute right-0 top-full mt-1 w-40 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden"
-                                            >
-                                                <button
-                                                    onClick={() => { setEditingCat(cat); setEditName(cat.name); setEditDesc(cat.description || ''); setActiveMenuId(null); }}
-                                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                                                >
-                                                    <Pencil size={14} className="text-slate-400" /> Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => { setDeletingCatId(cat._id); setActiveMenuId(null); }}
-                                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50"
-                                                >
-                                                    <Trash2 size={14} /> Delete
-                                                </button>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setDeletingCatId(cat._id); }}
+                                        className="lg:opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-600 hover:bg-white rounded-lg transition-all"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
                                 </div>
                             </div>
                         ))}
@@ -265,26 +246,32 @@ export default function CategoriesPage() {
                 </div>
 
                 {/* Fields Column */}
-                <div className="lg:col-span-2 bg-white premium-card flex flex-col overflow-hidden">
+                <div className={`lg:col-span-2 bg-white premium-card flex flex-col overflow-hidden ${selectedCategory ? 'flex' : 'hidden lg:flex'}`}>
                     {selectedCategory ? (
                         <>
                             {/* Fields Header */}
-                            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-indigo-600 text-white rounded-lg shadow-md shadow-indigo-100">
+                            <div className="p-4 lg:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <button
+                                        onClick={() => setSelectedCategory(null)}
+                                        className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-slate-600"
+                                    >
+                                        <ChevronRight size={20} className="rotate-180" />
+                                    </button>
+                                    <div className="hidden xs:flex p-2 bg-indigo-600 text-white rounded-lg shadow-md shadow-indigo-100 flex-shrink-0">
                                         <Settings2 size={18} />
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-slate-900">{selectedCategory.name}</h3>
-                                        <p className="text-xs text-slate-500">{fields.length} fields configured</p>
+                                    <div className="min-w-0">
+                                        <h3 className="font-bold text-slate-900 text-sm lg:text-base truncate">{selectedCategory.name}</h3>
+                                        <p className="text-[10px] lg:text-xs text-slate-500">{fields.length} fields</p>
                                     </div>
                                 </div>
                                 {!showQuickAdd && (
                                     <button
                                         onClick={() => setShowQuickAdd(true)}
-                                        className="flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-white hover:bg-indigo-600 bg-indigo-50 px-4 py-2 rounded-xl transition-all"
+                                        className="flex items-center gap-2 text-[10px] lg:text-xs font-bold text-indigo-600 hover:text-white hover:bg-indigo-600 bg-indigo-50 px-3 lg:px-4 py-2 rounded-xl transition-all flex-shrink-0"
                                     >
-                                        <Plus size={14} /> Add Field
+                                        <Plus size={14} /> <span className="hidden sm:inline">Add Field</span><span className="sm:hidden">Add</span>
                                     </button>
                                 )}
                             </div>
