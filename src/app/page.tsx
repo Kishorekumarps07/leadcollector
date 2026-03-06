@@ -6,7 +6,6 @@ import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -103,7 +102,7 @@ export default function LoginPage() {
         <div className="mt-12 text-center">
           <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Promptix tech solutions &copy; {new Date().getFullYear()}</p>
         </div>
-      </motion.div >
-    </div >
+      </motion.div>
+    </div>
   );
 }
