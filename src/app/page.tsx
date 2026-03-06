@@ -40,7 +40,7 @@ export default function LoginPage() {
       >
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-3xl bg-white shadow-xl shadow-indigo-100 p-5 mb-6 mx-auto">
-            <img src="/logo.png" alt="PROMPTIX Logo" className="w-full h-full object-contain" />
+            <img src="/logo.png" alt="Promptix Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Welcome Back</h1>
           <p className="text-slate-500 mt-2">Sign in to your Promptix account</p>
@@ -70,12 +70,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between pl-1">
-                <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Password</label>
-                <Link href="#" className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-wider">
-                  Forgot?
-                </Link>
-              </div>
+              <label className="text-xs font-black text-slate-500 uppercase tracking-widest pl-1">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input
@@ -108,7 +103,7 @@ export default function LoginPage() {
         <div className="mt-12 text-center">
           <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Promptix tech solutions &copy; {new Date().getFullYear()}</p>
         </div>
-      </motion.div>
-    </div>
+      </motion.div >
+    </div >
   );
 }

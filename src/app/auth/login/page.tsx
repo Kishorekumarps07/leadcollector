@@ -48,7 +48,7 @@ export default function LoginPage() {
                         transition={{ duration: 0.6 }}
                         className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl p-4 border border-white/20"
                     >
-                        <img src="/logo.png" alt="PROMPTIX Logo" className="w-full h-full object-contain" />
+                        <img src="/logo.png" alt="Promptix Logo" className="w-full h-full object-contain" />
                     </motion.div>
 
                     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2, duration: 0.5 }}>
@@ -79,7 +79,7 @@ export default function LoginPage() {
                     </motion.div>
                 </div>
 
-                <p className="absolute bottom-6 text-xs text-indigo-400/60 font-medium">© 2026 PROMPTIX TECH SOLUTIONS</p>
+                <p className="absolute bottom-6 text-xs text-indigo-400/60 font-medium">© 2026 Promptix tech solutions</p>
             </div>
 
             {/* Right — Login Form */}
@@ -93,7 +93,7 @@ export default function LoginPage() {
                     {/* Mobile logo */}
                     <div className="flex items-center justify-center gap-3 mb-10 lg:hidden">
                         <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center p-2">
-                            <img src="/logo.png" alt="PROMPTIX" className="w-full h-full object-contain" />
+                            <img src="/logo.png" alt="Promptix" className="w-full h-full object-contain" />
                         </div>
                         <div>
                             <p className="font-black text-slate-900 text-lg leading-none">Promptix</p>
