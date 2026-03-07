@@ -41,3 +41,11 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+*.db
+*.sqlite
+tmp_*
+/backend/check_tracking_data.js
+/backend/check_live_tracking.js
+/backend/find_kishores.js
+/backend/tmp_check_users.js
+.tmp/
