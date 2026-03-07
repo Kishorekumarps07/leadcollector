@@ -55,8 +55,16 @@ export default function TrackingPage() {
         return () => clearInterval(interval);
     }, [fetchTracking]);
 
-    const agentsWithLocation = agents.filter(a => a.lastLocation);
-    const agentsWithoutLocation = agents.filter(a => !a.lastLocation);
+    const isValidCoord = (loc: any) => {
+        return loc &&
+            typeof loc.latitude === 'number' &&
+            typeof loc.longitude === 'number' &&
+            !isNaN(loc.latitude) &&
+            !isNaN(loc.longitude);
+    };
+
+    const agentsWithLocation = agents.filter(a => isValidCoord(a.lastLocation));
+    const agentsWithoutLocation = agents.filter(a => !isValidCoord(a.lastLocation));
 
     return (
         <div className="space-y-6 h-full flex flex-col">

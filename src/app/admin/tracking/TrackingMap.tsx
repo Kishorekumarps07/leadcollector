@@ -16,6 +16,14 @@ if (typeof window !== 'undefined') {
     });
 }
 
+const isValidCoord = (loc: any) => {
+    return loc &&
+        typeof loc.latitude === 'number' &&
+        typeof loc.longitude === 'number' &&
+        !isNaN(loc.latitude) &&
+        !isNaN(loc.longitude);
+};
+
 const createAgentIcon = (agentName: string, isSelected: boolean) => {
     const initial = agentName?.charAt(0)?.toUpperCase() || '?';
     // Alabaster/White theme
@@ -58,9 +66,10 @@ const createAgentIcon = (agentName: string, isSelected: boolean) => {
 function MapController({ selectedAgent }: { selectedAgent: any }) {
     const map = useMap();
     useEffect(() => {
-        if (selectedAgent?.lastLocation) {
+        const loc = selectedAgent?.lastLocation;
+        if (loc && typeof loc.latitude === 'number' && typeof loc.longitude === 'number' && !isNaN(loc.latitude) && !isNaN(loc.longitude)) {
             map.flyTo(
-                [selectedAgent.lastLocation.latitude, selectedAgent.lastLocation.longitude],
+                [loc.latitude, loc.longitude],
                 15,
                 { duration: 1.5, easeLinearity: 0.25 }
             );
@@ -84,8 +93,9 @@ export default function TrackingMap({ agents, selectedAgent, onSelectAgent }: Pr
 
     if (!hasMounted) return null;
 
-    const defaultCenter: [number, number] = agents.length > 0 && agents[0].lastLocation
-        ? [agents[0].lastLocation.latitude, agents[0].lastLocation.longitude]
+    const firstValidAgent = agents.find(a => isValidCoord(a.lastLocation));
+    const defaultCenter: [number, number] = firstValidAgent
+        ? [firstValidAgent.lastLocation.latitude, firstValidAgent.lastLocation.longitude]
         : [20.5937, 78.9629]; // India center as fallback
 
     return (
@@ -102,58 +112,63 @@ export default function TrackingMap({ agents, selectedAgent, onSelectAgent }: Pr
                 className="light-map"
             />
             <MapController selectedAgent={selectedAgent} />
-            {agents.map((agent) => (
-                <Marker
-                    key={agent._id}
-                    position={[agent.lastLocation.latitude, agent.lastLocation.longitude]}
-                    icon={createAgentIcon(agent.name, selectedAgent?._id === agent._id)}
-                    eventHandlers={{ click: () => onSelectAgent(agent) }}
-                >
-                    <Popup className="premium-popup">
-                        <div style={{
-                            background: '#ffffff',
-                            padding: '12px',
-                            borderRadius: '16px',
-                            border: '1px solid #f1f5f9',
-                            minWidth: '180px',
-                            color: '#0f172a',
-                            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'
-                        }}>
-                            <p style={{
-                                fontWeight: '900',
-                                fontSize: '12px',
-                                margin: '0 0 6px',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                fontStyle: 'italic',
-                                color: '#000000'
-                            }}>{agent.name}</p>
+            {agents.map((agent) => {
+                const loc = agent.lastLocation;
+                if (!isValidCoord(loc)) return null;
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                <span style={{
-                                    fontSize: '9px',
-                                    background: '#f8fafc',
-                                    color: '#c5a059',
-                                    padding: '2px 8px',
-                                    borderRadius: '4px',
+                return (
+                    <Marker
+                        key={agent._id}
+                        position={[loc.latitude, loc.longitude]}
+                        icon={createAgentIcon(agent.name, selectedAgent?._id === agent._id)}
+                        eventHandlers={{ click: () => onSelectAgent(agent) }}
+                    >
+                        <Popup className="premium-popup">
+                            <div style={{
+                                background: '#ffffff',
+                                padding: '12px',
+                                borderRadius: '16px',
+                                border: '1px solid #f1f5f9',
+                                minWidth: '180px',
+                                color: '#0f172a',
+                                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)'
+                            }}>
+                                <p style={{
                                     fontWeight: '900',
+                                    fontSize: '12px',
+                                    margin: '0 0 6px',
                                     textTransform: 'uppercase',
-                                    border: '1px solid #f1f5f9'
-                                }}>{agent.lastLocation.category}</span>
+                                    letterSpacing: '0.05em',
+                                    fontStyle: 'italic',
+                                    color: '#000000'
+                                }}>{agent.name}</p>
+
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                    <span style={{
+                                        fontSize: '9px',
+                                        background: '#f8fafc',
+                                        color: '#c5a059',
+                                        padding: '2px 8px',
+                                        borderRadius: '4px',
+                                        fontWeight: '900',
+                                        textTransform: 'uppercase',
+                                        border: '1px solid #f1f5f9'
+                                    }}>{loc.category}</span>
+                                </div>
+
+                                <p style={{ fontSize: '9px', color: '#64748b', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <span style={{ color: '#c5a059', fontWeight: '900' }}>SYNC:</span>
+                                    {formatRelativeTime(loc.lastSeen)}
+                                </p>
+
+                                <p style={{ fontSize: '8px', color: '#94a3b8', margin: 0, fontFamily: 'monospace' }}>
+                                    GPS: {loc.latitude.toFixed(6)}, {loc.longitude.toFixed(6)}
+                                </p>
                             </div>
-
-                            <p style={{ fontSize: '9px', color: '#64748b', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <span style={{ color: '#c5a059', fontWeight: '900' }}>SYNC:</span>
-                                {formatRelativeTime(agent.lastLocation.lastSeen)}
-                            </p>
-
-                            <p style={{ fontSize: '8px', color: '#94a3b8', margin: 0, fontFamily: 'monospace' }}>
-                                GPS: {agent.lastLocation.latitude.toFixed(6)}, {agent.lastLocation.longitude.toFixed(6)}
-                            </p>
-                        </div>
-                    </Popup>
-                </Marker>
-            ))}
+                        </Popup>
+                    </Marker>
+                );
+            })}
 
             {/* Custom CSS for map styling */}
             <style jsx global>{`

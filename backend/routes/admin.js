@@ -378,8 +378,11 @@ router.get('/tracking', authorize('Admin', 'Manager'), async (req, res) => {
                 .select('latitude longitude created_at category_id')
                 .populate('category_id', 'name');
 
-            const lastTracking = await Tracking.findOne({ agent_id: agent._id })
-                .sort('-timestamp');
+            const lastTracking = await Tracking.findOne({
+                agent_id: agent._id,
+                latitude: { $ne: null, $exists: true },
+                longitude: { $ne: null, $exists: true }
+            }).sort('-timestamp');
 
             let lastLoc = null;
 
