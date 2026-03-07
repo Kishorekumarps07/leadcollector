@@ -19,6 +19,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
+import { formatTime } from '@/lib/utils';
 
 const NAV_ITEMS = [
     { icon: BarChart3, label: 'Dashboard', href: '/admin/dashboard' },
@@ -82,7 +83,7 @@ const SidebarContent = ({ isCollapsed, pathname, onLogout }: SidebarProps) => (
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const { logout, user } = useAuth();
+    const { logout, user, loading } = useAuth();
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -102,6 +103,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         fetchNotifications();
     }, []);
 
+    // Role-based access control
+    useEffect(() => {
+        if (!loading && user) {
+            if (user.role !== 'Admin' && user.role !== 'Manager') {
+                router.push('/agent/submit');
+            }
+        } else if (!loading && !user) {
+            router.push('/');
+        }
+    }, [user, loading, router]);
+
     // Close mobile menu on route change
     useEffect(() => {
         setIsMobileMenuOpen(false);
@@ -114,7 +126,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             setNotifications(recent.slice(0, 6).map((r: any) => ({
                 id: r._id,
                 message: `${r.agent_id?.name || 'Agent'} submitted in "${r.category_id?.name || 'Unknown'}"`,
-                time: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                time: formatTime(r.created_at),
             })));
         } catch { /* silent */ }
     };

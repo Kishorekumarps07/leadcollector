@@ -9,6 +9,7 @@ import {
 import api from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { formatDate, formatTime } from '@/lib/utils';
 
 export default function AgentManagementPage() {
     const [agents, setAgents] = useState<any[]>([]);
@@ -200,8 +201,8 @@ export default function AgentManagementPage() {
                                     <td className="px-6 py-5 whitespace-nowrap">
                                         {agent.lastActive ? (
                                             <div className="flex flex-col">
-                                                <p className="text-xs font-black text-black italic">{new Date(agent.lastActive).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}</p>
-                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{new Date(agent.lastActive).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                                <p className="text-xs font-black text-black italic">{formatDate(agent.lastActive)}</p>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{formatTime(agent.lastActive)}</p>
                                             </div>
                                         ) : (
                                             <span className="text-[10px] text-slate-200 font-black uppercase tracking-widest italic">Signal Lost</span>

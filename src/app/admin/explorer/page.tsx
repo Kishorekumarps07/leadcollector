@@ -10,6 +10,7 @@ import api from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import ImportModal from './ImportModal';
+import { formatDate, formatTime, formatDateTime } from '@/lib/utils';
 
 // ── CSV Download ─────────────────────────────────────────────────────────────
 function downloadCSV(rows: any[], columns: string[], getVal: (r: any, col: string) => any, filename: string) {
@@ -17,7 +18,7 @@ function downloadCSV(rows: any[], columns: string[], getVal: (r: any, col: strin
     const header = columns.map(esc).join(',');
     const body = rows.map(row =>
         columns.map(col => {
-            if (col === 'Date') return esc(new Date(row.created_at).toLocaleString('en-IN'));
+            if (col === 'Date') return esc(formatDateTime(row.created_at));
             if (col === 'Category') return esc(row.category_id?.name);
             if (col === 'Agent') return esc(row.agent_id?.name);
             if (col === 'GPS') return esc(row.latitude && row.longitude ? `${row.latitude},${row.longitude}` : '');
@@ -251,8 +252,8 @@ function DataExplorerContent() {
                                 {filtered.map((record, i) => (
                                     <motion.tr key={record._id} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }} className="hover:bg-slate-50 transition-colors">
                                         <td className="px-5 py-4 whitespace-nowrap">
-                                            <div className="font-black text-black text-xs italic">{new Date(record.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })}</div>
-                                            <div className="text-slate-400 text-[10px] italic font-bold uppercase">{new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                            <div className="font-black text-black text-xs italic">{formatDate(record.created_at, { day: 'numeric', month: 'short', year: '2-digit' })}</div>
+                                            <div className="text-slate-400 text-[10px] italic font-bold uppercase">{formatTime(record.created_at)}</div>
                                         </td>
                                         <td className="px-5 py-4 whitespace-nowrap">
                                             <span className="px-2.5 py-1 bg-gold-main/10 text-gold-dark text-[10px] font-black rounded-full border border-gold-main/20 uppercase tracking-tighter italic">{record.category_id?.name || '—'}</span>
@@ -321,7 +322,7 @@ function DataExplorerContent() {
                                 <button onClick={() => setViewRecord(null)} className="p-2 text-slate-400 hover:text-black hover:bg-slate-100 rounded-xl transition-all"><X size={18} /></button>
                             </div>
                             <div className="px-6 py-4 bg-slate-50 flex gap-6 border-b border-slate-100">
-                                <div className="flex items-center gap-2 text-xs text-slate-500 font-bold italic uppercase"><Calendar size={14} className="text-gold-dark" />{new Date(viewRecord.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                                <div className="flex items-center gap-2 text-xs text-slate-500 font-bold italic uppercase"><Calendar size={14} className="text-gold-dark" />{formatDateTime(viewRecord.created_at)}</div>
                                 {(viewRecord.latitude || viewRecord.longitude) && (
                                     <div className="flex items-center gap-2 text-xs text-emerald-600 font-black tracking-widest uppercase italic"><MapPin size={14} />{viewRecord.latitude?.toFixed(4)}, {viewRecord.longitude?.toFixed(4)}</div>
                                 )}

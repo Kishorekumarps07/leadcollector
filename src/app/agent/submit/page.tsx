@@ -18,6 +18,7 @@ import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import DynamicForm from '@/components/DynamicForm';
 import AgentNav from '@/components/AgentNav';
+import TrackingStatus from '@/components/TrackingStatus';
 import { useRouter } from 'next/navigation';
 
 interface Category {
@@ -191,6 +192,8 @@ export default function SubmitDataPage() {
                     ))}
                 </div>
             </div>
+
+            <TrackingStatus />
 
             <div className="flex-1 p-6 overflow-y-auto">
                 {error && (

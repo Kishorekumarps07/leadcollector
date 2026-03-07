@@ -8,6 +8,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
+import { formatDateTime } from '@/lib/utils';
 
 // Toast notification component
 function Toast({ message, type }: { message: string; type: 'success' | 'error' }) {
@@ -419,7 +420,7 @@ export default function SettingsPage() {
                                                 { icon: Server, label: 'Core Process', value: 'ONLINE / STEADY', active: true },
                                                 { icon: Database, label: 'DBS Atlas Relay', value: sysStats.dbStatus, active: sysStats.dbStatus === 'Connected' },
                                                 { icon: Globe, label: 'Strategic Port', value: '5000 / ENCRYPTED', active: true },
-                                                { icon: Clock, label: 'System Uptime', value: new Date(sysStats.serverTime).toLocaleString('en-IN'), active: true },
+                                                { icon: Clock, label: 'System Uptime', value: formatDateTime(sysStats.serverTime), active: true },
                                             ].map(({ icon: Icon, label, value, active }) => (
                                                 <div key={label} className="flex items-center justify-between p-5 bg-slate-50/50 rounded-2xl border border-slate-100 shadow-sm">
                                                     <div className="flex items-center gap-4">

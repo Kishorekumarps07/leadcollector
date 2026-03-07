@@ -5,6 +5,7 @@ import { MapPin, Users, Navigation, RefreshCcw, AlertCircle, Clock, Activity } f
 import { motion } from 'framer-motion';
 import api from '@/lib/api';
 import dynamic from 'next/dynamic';
+import { formatTime, formatRelativeTime } from '@/lib/utils';
 
 interface TrackingMapProps {
     agents: any[];
@@ -49,8 +50,8 @@ export default function TrackingPage() {
 
     useEffect(() => {
         fetchTracking();
-        // Auto-refresh every 60 seconds
-        const interval = setInterval(fetchTracking, 60000);
+        // Auto-refresh every 10 seconds for real-time feel
+        const interval = setInterval(fetchTracking, 10000);
         return () => clearInterval(interval);
     }, [fetchTracking]);
 
@@ -66,14 +67,14 @@ export default function TrackingPage() {
                     <p className="text-slate-500 mt-1 text-sm italic">Real-time telemetry and geospatial positioning of operational assets.</p>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap">
-                    <div className="flex items-center gap-2.5 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 font-black text-[10px] uppercase tracking-widest italic animate-pulse">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
-                        Live Feed
+                    <div className={`flex items-center gap-2.5 px-4 py-2 ${loading ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'} rounded-full border font-black text-[10px] uppercase tracking-widest italic transition-all duration-500`}>
+                        <div className={`w-2 h-2 ${loading ? 'bg-indigo-500 animate-spin rounded-sm' : 'bg-emerald-500 animate-pulse rounded-full'} shadow-[0_0_8px_rgba(16,185,129,0.4)]`}></div>
+                        {loading ? 'Resyncing...' : 'Live Feed'}
                     </div>
                     {mounted && (
                         <div className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl">
                             <span className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] italic">
-                                Sync: {lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                Sync: {formatTime(lastRefresh, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                             </span>
                         </div>
                     )}
@@ -161,7 +162,7 @@ export default function TrackingPage() {
                                                     <span className="w-1 h-1 bg-slate-100 rounded-full" />
                                                     <p className="text-[9px] text-slate-500 font-bold uppercase flex items-center gap-1 italic">
                                                         <Clock size={10} className="stroke-[3px]" />
-                                                        {new Date(agent.lastLocation.lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        {formatRelativeTime(agent.lastLocation.lastSeen)}
                                                     </p>
                                                 </div>
                                             </div>

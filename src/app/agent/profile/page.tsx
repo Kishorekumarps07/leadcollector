@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import AgentNav from '@/components/AgentNav';
+import TrackingStatus from '@/components/TrackingStatus';
 
 export default function AgentProfilePage() {
     const { user, logout } = useAuth();
@@ -31,6 +32,8 @@ export default function AgentProfilePage() {
                 <h1 className="text-xl font-bold text-slate-900">My Profile</h1>
                 <p className="text-xs text-slate-500 mt-1">Your account details and session info.</p>
             </div>
+
+            <TrackingStatus />
 
             <div className="flex-1 p-6 overflow-y-auto space-y-6">
                 {/* Avatar Card */}

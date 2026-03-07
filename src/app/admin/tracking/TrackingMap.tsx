@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { formatDateTime, formatRelativeTime } from '@/lib/utils';
 
 // Fix default icon paths broken by Webpack
 if (typeof window !== 'undefined') {
@@ -143,7 +144,7 @@ export default function TrackingMap({ agents, selectedAgent, onSelectAgent }: Pr
 
                             <p style={{ fontSize: '9px', color: '#64748b', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 <span style={{ color: '#c5a059', fontWeight: '900' }}>SYNC:</span>
-                                {new Date(agent.lastLocation.lastSeen).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                {formatRelativeTime(agent.lastLocation.lastSeen)}
                             </p>
 
                             <p style={{ fontSize: '8px', color: '#94a3b8', margin: 0, fontFamily: 'monospace' }}>

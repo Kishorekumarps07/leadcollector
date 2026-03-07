@@ -11,8 +11,12 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import AgentNav from '@/components/AgentNav';
+import TrackingStatus from '@/components/TrackingStatus';
+import { useAuth } from '@/context/AuthContext';
+import { formatDate } from '@/lib/utils';
 
 export default function AgentHistoryPage() {
+    const { user } = useAuth();
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -41,6 +45,8 @@ export default function AgentHistoryPage() {
                 </h1>
                 <p className="text-xs text-slate-500 mt-1">Your recent field collection activity.</p>
             </div>
+
+            <TrackingStatus />
 
             <div className="flex-1 p-6 overflow-y-auto space-y-4">
                 {loading ? (
@@ -71,7 +77,7 @@ export default function AgentHistoryPage() {
                                 <div className="flex items-center gap-4">
                                     <div className="flex items-center gap-1.5 text-slate-400">
                                         <Calendar size={12} />
-                                        <span className="text-[10px] font-medium">{new Date(record.created_at).toLocaleDateString()}</span>
+                                        <span className="text-[10px] font-medium">{formatDate(record.created_at)}</span>
                                     </div>
                                     <div className="flex items-center gap-1.5 text-slate-400">
                                         <MapPin size={12} />

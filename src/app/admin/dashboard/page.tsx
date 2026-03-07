@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import { formatDate, formatTime } from '@/lib/utils';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState<any>(null);
@@ -152,10 +153,10 @@ export default function AdminDashboard() {
                                 <div className="text-right flex-shrink-0 hidden xs:block">
                                     <p className="text-[10px] text-slate-400 flex items-center gap-1.5 justify-end font-black uppercase italic">
                                         <Calendar size={10} className="text-gold-dark/40" />
-                                        {new Date(record.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                                        {formatDate(record.created_at, { day: 'numeric', month: 'short' })}
                                     </p>
                                     <p className="text-[9px] text-gold-dark/60 mt-0.5 font-black uppercase tabular-nums">
-                                        {new Date(record.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        {formatTime(record.created_at)}
                                     </p>
                                 </div>
                                 <div className="flex-shrink-0 ml-2">

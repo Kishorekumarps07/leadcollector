@@ -5,6 +5,7 @@ const Subcategory = require('../models/Subcategory');
 const Field = require('../models/Field');
 const User = require('../models/User');
 const Record = require('../models/Record');
+const Tracking = require('../models/Tracking');
 const router = express.Router();
 
 // All routes in this file are protected and require Admin/Manager roles
@@ -377,17 +378,51 @@ router.get('/tracking', authorize('Admin', 'Manager'), async (req, res) => {
                 .select('latitude longitude created_at category_id')
                 .populate('category_id', 'name');
 
+            const lastTracking = await Tracking.findOne({ agent_id: agent._id })
+                .sort('-timestamp');
+
+            let lastLoc = null;
+
+            if (lastRecord && lastTracking) {
+                const recDate = new Date(lastRecord.created_at);
+                const trackDate = new Date(lastTracking.timestamp);
+                if (recDate >= trackDate) {
+                    lastLoc = {
+                        latitude: lastRecord.latitude,
+                        longitude: lastRecord.longitude,
+                        lastSeen: lastRecord.created_at,
+                        category: lastRecord.category_id?.name || 'Unknown'
+                    };
+                } else {
+                    lastLoc = {
+                        latitude: lastTracking.latitude,
+                        longitude: lastTracking.longitude,
+                        lastSeen: lastTracking.timestamp,
+                        category: 'Live Tracking'
+                    };
+                }
+            } else if (lastRecord) {
+                lastLoc = {
+                    latitude: lastRecord.latitude,
+                    longitude: lastRecord.longitude,
+                    lastSeen: lastRecord.created_at,
+                    category: lastRecord.category_id?.name || 'Unknown'
+                };
+            } else if (lastTracking) {
+                lastLoc = {
+                    latitude: lastTracking.latitude,
+                    longitude: lastTracking.longitude,
+                    lastSeen: lastTracking.timestamp,
+                    category: 'Live Tracking'
+                };
+            }
+
             return {
                 _id: agent._id,
                 name: agent.name,
                 email: agent.email,
                 is_active: agent.is_active,
-                lastLocation: lastRecord ? {
-                    latitude: lastRecord.latitude,
-                    longitude: lastRecord.longitude,
-                    lastSeen: lastRecord.created_at,
-                    category: lastRecord.category_id?.name || 'Unknown'
-                } : null
+                lastLocation: lastLoc
             };
         }));
 

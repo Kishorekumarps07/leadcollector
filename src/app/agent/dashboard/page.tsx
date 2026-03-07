@@ -6,7 +6,9 @@ import { LayoutGrid, History, MapPin, TrendingUp, ClipboardList, ChevronRight, C
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import AgentNav from '@/components/AgentNav';
+import TrackingStatus from '@/components/TrackingStatus';
 import { useRouter } from 'next/navigation';
+import { formatDateTime } from '@/lib/utils';
 
 export default function AgentDashboard() {
     const { user } = useAuth();
@@ -76,6 +78,8 @@ export default function AgentDashboard() {
                         </div>
                     ))}
                 </div>
+
+                <TrackingStatus />
             </div>
 
             {/* Content */}
@@ -143,7 +147,7 @@ export default function AgentDashboard() {
                                         <p className="font-bold text-slate-900 text-sm truncate">{record.category_id?.name || 'Unknown'}</p>
                                         <div className="flex items-center gap-3 mt-0.5">
                                             <span className="text-[10px] text-slate-400 font-medium">
-                                                {new Date(record.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                {formatDateTime(record.created_at, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                                             </span>
                                             {record.latitude && (
                                                 <span className="flex items-center gap-0.5 text-[10px] text-emerald-600 font-bold">
