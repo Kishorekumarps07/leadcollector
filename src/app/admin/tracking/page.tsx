@@ -56,11 +56,10 @@ export default function TrackingPage() {
     }, [fetchTracking]);
 
     const isValidCoord = (loc: any) => {
-        return loc &&
-            typeof loc.latitude === 'number' &&
-            typeof loc.longitude === 'number' &&
-            !isNaN(loc.latitude) &&
-            !isNaN(loc.longitude);
+        if (!loc) return false;
+        const lat = Number(loc.latitude);
+        const lng = Number(loc.longitude);
+        return !isNaN(lat) && !isNaN(lng) && loc.latitude !== null && loc.longitude !== null;
     };
 
     const agentsWithLocation = agents.filter(a => isValidCoord(a.lastLocation));

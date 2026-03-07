@@ -17,11 +17,10 @@ if (typeof window !== 'undefined') {
 }
 
 const isValidCoord = (loc: any) => {
-    return loc &&
-        typeof loc.latitude === 'number' &&
-        typeof loc.longitude === 'number' &&
-        !isNaN(loc.latitude) &&
-        !isNaN(loc.longitude);
+    if (!loc) return false;
+    const lat = Number(loc.latitude);
+    const lng = Number(loc.longitude);
+    return !isNaN(lat) && !isNaN(lng) && loc.latitude !== null && loc.longitude !== null;
 };
 
 const createAgentIcon = (agentName: string, isSelected: boolean) => {
@@ -65,14 +64,39 @@ const createAgentIcon = (agentName: string, isSelected: boolean) => {
 // Component to fly to selected agent
 function MapController({ selectedAgent }: { selectedAgent: any }) {
     const map = useMap();
+
+    // Explicitly invalidate size when component mounts or selectedAgent changes
+    // This is critical for mobile where the map container might just have become visible
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [map, selectedAgent]);
+
     useEffect(() => {
         const loc = selectedAgent?.lastLocation;
-        if (loc && typeof loc.latitude === 'number' && typeof loc.longitude === 'number' && !isNaN(loc.latitude) && !isNaN(loc.longitude)) {
-            map.flyTo(
-                [loc.latitude, loc.longitude],
-                15,
-                { duration: 1.5, easeLinearity: 0.25 }
-            );
+        if (isValidCoord(loc)) {
+            const lat = Number(loc.latitude);
+            const lng = Number(loc.longitude);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                // Add a small delay to ensure the map has container size calculated
+                const flyTimer = setTimeout(() => {
+                    try {
+                        map.flyTo(
+                            [lat, lng],
+                            15,
+                            { duration: 1.5, easeLinearity: 0.25 }
+                        );
+                    } catch (err) {
+                        console.error("[Map] flyTo failed:", err);
+                        // Fallback to setView if flyTo fails
+                        map.setView([lat, lng], 15);
+                    }
+                }, 200);
+                return () => clearTimeout(flyTimer);
+            }
         }
     }, [selectedAgent, map]);
     return null;
