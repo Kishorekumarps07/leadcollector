@@ -100,8 +100,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const bellRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        fetchNotifications();
-    }, []);
+        if (!loading && user) {
+            fetchNotifications();
+        }
+    }, [user, loading]);
 
     // Role-based access control
     useEffect(() => {
@@ -120,6 +122,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }, [pathname]);
 
     const fetchNotifications = async () => {
+        // Prevent fetching if not logged in or loading
+        if (loading || !user) return;
+
         try {
             const res = await api.get('admin/stats');
             const recent = res.data.data?.recentSubmissions || [];
@@ -128,7 +133,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 message: `${r.agent_id?.name || 'Agent'} submitted in "${r.category_id?.name || 'Unknown'}"`,
                 time: formatTime(r.created_at),
             })));
-        } catch { /* silent */ }
+        } catch (err: any) {
+            console.warn("[AdminLayout] Notifications fetch failed", err);
+            // 401 is handled by api interceptor
+        }
     };
 
     // Close dropdowns on outside click
@@ -161,7 +169,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     };
 
     return (
-        <div className="flex h-screen bg-white font-sans overflow-hidden">
+        <div className="flex h-screen bg-white overflow-hidden">
             {/* Desktop Sidebar */}
             <aside className={`hidden lg:flex bg-slate-50 border-r border-slate-200 text-black transition-all duration-300 flex-shrink-0 flex-col overflow-hidden ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
                 <SidebarContent isCollapsed={!isSidebarOpen} pathname={pathname} onLogout={logout} />
