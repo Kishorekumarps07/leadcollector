@@ -23,6 +23,19 @@ app.use((req, res, next) => {
 // Enable CORS
 app.use(cors());
 
+// Database connection check middleware
+app.use((req, res, next) => {
+    const dbError = connectDB.getConnectionError ? connectDB.getConnectionError() : null;
+    if (dbError) {
+        return res.status(500).json({
+            success: false,
+            message: `Database connection error: ${dbError.message}`,
+            details: dbError.stack || dbError.message
+        });
+    }
+    next();
+});
+
 // Route files
 const auth = require('./routes/auth');
 const admin = require('./routes/admin');
