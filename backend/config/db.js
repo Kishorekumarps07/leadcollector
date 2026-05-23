@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const User = require('../models/User');
 const Category = require('../models/Category');
 const Field = require('../models/Field');
@@ -42,6 +41,7 @@ const connectDB = async () => {
 
         try {
             console.log('Starting local in-memory MongoDB server...');
+            const { MongoMemoryServer } = require('mongodb-memory-server');
             mongoServer = await MongoMemoryServer.create();
             const localUri = mongoServer.getUri();
             console.log(`In-memory MongoDB started at: ${localUri}`);
